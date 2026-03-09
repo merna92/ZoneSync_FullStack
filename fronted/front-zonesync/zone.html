@@ -1,0 +1,4912 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZoneSync – Smart Farm Management</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Figtree:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        :root {
+            --g1: #1a3d2b;
+            --g2: #2d6a4f;
+            --g3: #40916c;
+            --g4: #52b788;
+            --g5: #95d5b2;
+            --g6: #d8f3dc;
+            --white: #fff;
+            --off: #f6fbf7;
+            --text: #0d2016;
+            --mid: #3d5c47;
+            --muted: #7a9a84;
+            --border: #daeee2;
+            --red: #d64045;
+            --amber: #e9a84c;
+            --blue: #3b82f6;
+            --shadow: 0 2px 16px rgba(26, 61, 43, .08);
+            --shadow-lg: 0 8px 40px rgba(26, 61, 43, .14);
+            --r: 14px;
+            --sw: 244px;
+            --th: 64px;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: 'Figtree', sans-serif;
+            color: var(--text);
+            background: var(--off)
+        }
+
+        /* ══ PAGES ══ */
+        .page {
+            display: none;
+            min-height: 100vh
+        }
+
+        .page.on {
+            display: flex;
+            flex-direction: column
+        }
+
+        .app-shell {
+            display: none;
+            min-height: 100vh
+        }
+
+        .app-shell.on {
+            display: block
+        }
+
+        @keyframes fi {
+            from {
+                opacity: 0;
+                transform: translateY(12px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .anim {
+            animation: fi .32s ease
+        }
+
+        /* ══════════════════
+   AUTH LAYOUT
+══════════════════ */
+        .auth-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 100vh
+        }
+
+        @media(max-width:860px) {
+            .auth-grid {
+                grid-template-columns: 1fr
+            }
+        }
+
+        /* Left decorative panel */
+        .auth-panel {
+            background: linear-gradient(150deg, var(--g1) 0%, var(--g2) 60%, var(--g3) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 44px 48px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @media(max-width:860px) {
+            .auth-panel {
+                display: none
+            }
+        }
+
+        .ap-blob {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .06);
+            pointer-events: none
+        }
+
+        .ap-logo {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            position: relative;
+            z-index: 1
+        }
+
+        .ap-logo-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .18);
+            border: 1.5px solid rgba(255, 255, 255, .25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Instrument Serif', serif;
+            font-size: 20px;
+            color: #fff
+        }
+
+        .ap-logo-name {
+            font-size: 21px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -.4px
+        }
+
+        .ap-mid {
+            position: relative;
+            z-index: 1
+        }
+
+        .ap-mid h2 {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(26px, 2.8vw, 38px);
+            color: #fff;
+            line-height: 1.18;
+            margin-bottom: 16px
+        }
+
+        .ap-mid p {
+            font-size: 14.5px;
+            color: rgba(255, 255, 255, .72);
+            line-height: 1.7;
+            max-width: 340px;
+            margin-bottom: 32px
+        }
+
+        .ap-stats {
+            display: flex;
+            gap: 32px
+        }
+
+        .ap-stat-n {
+            font-size: 28px;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1
+        }
+
+        .ap-stat-l {
+            font-size: 12px;
+            color: rgba(255, 255, 255, .55);
+            margin-top: 3px
+        }
+
+        .ap-bottom {
+            position: relative;
+            z-index: 1
+        }
+
+        .ap-card {
+            background: rgba(255, 255, 255, .1);
+            border: 1px solid rgba(255, 255, 255, .16);
+            border-radius: 16px;
+            padding: 22px
+        }
+
+        .ap-card p {
+            font-size: 14px;
+            color: rgba(255, 255, 255, .82);
+            line-height: 1.65;
+            font-style: italic;
+            margin-bottom: 14px
+        }
+
+        .ap-author {
+            display: flex;
+            align-items: center;
+            gap: 11px
+        }
+
+        .ap-ava {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0
+        }
+
+        .ap-name {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #fff
+        }
+
+        .ap-role {
+            font-size: 11.5px;
+            color: rgba(255, 255, 255, .55)
+        }
+
+        /* Right form panel */
+        .auth-form-wrap {
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px clamp(24px, 6vw, 88px)
+        }
+
+        .auth-inner {
+            width: 100%;
+            max-width: 420px
+        }
+
+        .auth-mobile-logo {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 28px
+        }
+
+        @media(max-width:860px) {
+            .auth-mobile-logo {
+                display: flex
+            }
+        }
+
+        .auth-mobile-logo-box {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--g1), var(--g3));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Instrument Serif', serif;
+            font-size: 17px;
+            color: #fff
+        }
+
+        .auth-mobile-logo span {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -.3px
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 13px;
+            color: var(--muted);
+            cursor: pointer;
+            margin-bottom: 28px;
+            background: none;
+            border: none;
+            font-family: 'Figtree', sans-serif;
+            transition: color .15s
+        }
+
+        .back-link:hover {
+            color: var(--g2)
+        }
+
+        .auth-h {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(24px, 3vw, 32px);
+            letter-spacing: -.3px;
+            margin-bottom: 5px
+        }
+
+        .auth-sub {
+            font-size: 14px;
+            color: var(--muted);
+            margin-bottom: 26px;
+            line-height: 1.55
+        }
+
+        .auth-sub .lnk {
+            color: var(--g2);
+            font-weight: 600;
+            cursor: pointer
+        }
+
+        .auth-sub .lnk:hover {
+            text-decoration: underline
+        }
+
+        /* ── Invite banner (shown on farmer login page) ── */
+        .invite-banner {
+            background: linear-gradient(135deg, var(--g1), var(--g2));
+            border-radius: 13px;
+            padding: 18px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 13px;
+            align-items: flex-start
+        }
+
+        .invite-icon {
+            font-size: 26px;
+            flex-shrink: 0;
+            margin-top: 1px
+        }
+
+        .invite-text-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px
+        }
+
+        .invite-text-body {
+            font-size: 13px;
+            color: rgba(255, 255, 255, .75);
+            line-height: 1.5
+        }
+
+        /* Form elements */
+        .fg {
+            margin-bottom: 15px
+        }
+
+        .fl {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 6px
+        }
+
+        .fi {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-family: 'Figtree', sans-serif;
+            font-size: 14px;
+            color: var(--text);
+            background: var(--white);
+            outline: none;
+            transition: all .18s
+        }
+
+        .fi:focus {
+            border-color: var(--g3);
+            box-shadow: 0 0 0 3px rgba(64, 145, 108, .1)
+        }
+
+        .fi::placeholder {
+            color: var(--muted)
+        }
+
+        .fi-wrap {
+            position: relative
+        }
+
+        .fi-wrap .fi {
+            padding-right: 44px
+        }
+
+        .fi-eye {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 17px;
+            color: var(--muted);
+            background: none;
+            border: none;
+            transition: color .15s
+        }
+
+        .fi-eye:hover {
+            color: var(--g2)
+        }
+
+        .frow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px
+        }
+
+        .f2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px
+        }
+
+        .f-link {
+            font-size: 12.5px;
+            color: var(--g2);
+            font-weight: 600;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-family: 'Figtree', sans-serif
+        }
+
+        .f-link:hover {
+            text-decoration: underline
+        }
+
+        .fcheck {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            font-size: 13px;
+            color: var(--mid);
+            cursor: pointer;
+            margin-bottom: 20px
+        }
+
+        .fcheck input {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--g2);
+            flex-shrink: 0;
+            margin-top: 2px;
+            cursor: pointer
+        }
+
+        .fcheck a {
+            color: var(--g2);
+            font-weight: 600
+        }
+
+        .fsubmit {
+            width: 100%;
+            padding: 13px;
+            border-radius: 11px;
+            border: none;
+            cursor: pointer;
+            background: var(--g2);
+            color: #fff;
+            font-family: 'Figtree', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            box-shadow: 0 4px 18px rgba(45, 106, 79, .28);
+            transition: all .18s
+        }
+
+        .fsubmit:hover {
+            background: var(--g1);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 24px rgba(45, 106, 79, .38)
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 18px 0;
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border)
+        }
+
+        .social-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px
+        }
+
+        .s-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px;
+            border-radius: 10px;
+            border: 1.5px solid var(--border);
+            font-family: 'Figtree', sans-serif;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text);
+            cursor: pointer;
+            background: var(--white);
+            transition: all .16s
+        }
+
+        .s-btn:hover {
+            background: var(--off);
+            border-color: var(--g5)
+        }
+
+        .alert-box {
+            padding: 11px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 14px;
+            display: none
+        }
+
+        .alert-box.on {
+            display: block
+        }
+
+        .alert-box.err {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b
+        }
+
+        .alert-box.ok {
+            background: var(--g6);
+            border: 1px solid var(--g5);
+            color: var(--g1)
+        }
+
+        .pw-str {
+            display: none;
+            margin-top: 7px
+        }
+
+        .pw-str.on {
+            display: block
+        }
+
+        .pw-bars {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 4px
+        }
+
+        .pw-bar {
+            height: 4px;
+            flex: 1;
+            border-radius: 2px;
+            background: var(--border);
+            transition: background .28s
+        }
+
+        .pw-bar.w {
+            background: var(--red)
+        }
+
+        .pw-bar.m {
+            background: var(--amber)
+        }
+
+        .pw-bar.s {
+            background: var(--g3)
+        }
+
+        .pw-lbl {
+            font-size: 11.5px;
+            color: var(--muted)
+        }
+
+        /* OTP */
+        .otp-row {
+            display: flex;
+            gap: 9px;
+            justify-content: center;
+            margin: 22px 0
+        }
+
+        .otp-i {
+            width: 50px;
+            height: 56px;
+            border-radius: 10px;
+            border: 1.5px solid var(--border);
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--text);
+            outline: none;
+            transition: all .18s
+        }
+
+        .otp-i:focus {
+            border-color: var(--g3);
+            box-shadow: 0 0 0 3px rgba(64, 145, 108, .12)
+        }
+
+        .otp-resend {
+            text-align: center;
+            font-size: 13px;
+            color: var(--muted)
+        }
+
+        .otp-resend span {
+            color: var(--g2);
+            font-weight: 600;
+            cursor: pointer
+        }
+
+        /* ══════════════════
+   LANDING
+══════════════════ */
+        .lnav {
+            position: fixed;
+            inset: 0 0 auto;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5vw;
+            height: 68px;
+            background: rgba(246, 251, 247, .94);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border)
+        }
+
+        .lnav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer
+        }
+
+        .lnav-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--g1), var(--g3));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Instrument Serif', serif;
+            font-size: 17px;
+            color: #fff;
+            box-shadow: 0 3px 12px rgba(26, 61, 43, .28)
+        }
+
+        .lnav-name {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -.4px
+        }
+
+        .lnav-name em {
+            font-style: normal;
+            color: var(--g3)
+        }
+
+        .lnav-links {
+            display: flex;
+            align-items: center;
+            gap: 5px
+        }
+
+        .lnav-btn {
+            padding: 7px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--mid);
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-family: 'Figtree', sans-serif;
+            transition: all .15s
+        }
+
+        .lnav-btn:hover {
+            background: var(--g6);
+            color: var(--g2)
+        }
+
+        .lnav-cta {
+            background: var(--g2) !important;
+            color: #fff !important;
+            box-shadow: 0 3px 12px rgba(45, 106, 79, .28);
+            border-radius: 9px
+        }
+
+        .lnav-cta:hover {
+            background: var(--g1) !important
+        }
+
+        /* Hero */
+        .hero {
+            padding: 148px 5vw 88px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: 64px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%
+        }
+
+        @media(max-width:900px) {
+            .hero {
+                grid-template-columns: 1fr;
+                padding-top: 120px
+            }
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: var(--g6);
+            border: 1px solid var(--g5);
+            padding: 5px 14px 5px 8px;
+            border-radius: 20px;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--g2);
+            margin-bottom: 20px
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--g3)
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(64, 145, 108, .4)
+            }
+
+            50% {
+                box-shadow: 0 0 0 7px rgba(64, 145, 108, 0)
+            }
+        }
+
+        .live-dot {
+            animation: pulse 2s infinite
+        }
+
+        .hero h1 {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(38px, 4.5vw, 62px);
+            line-height: 1.07;
+            letter-spacing: -.5px;
+            margin-bottom: 18px
+        }
+
+        .hero h1 em {
+            font-style: italic;
+            color: var(--g3)
+        }
+
+        .hero p {
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--mid);
+            margin-bottom: 34px;
+            max-width: 450px
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 11px;
+            border: none;
+            cursor: pointer;
+            font-family: 'Figtree', sans-serif;
+            font-size: 14.5px;
+            font-weight: 600;
+            transition: all .18s
+        }
+
+        .btn-p {
+            background: var(--g2);
+            color: #fff;
+            box-shadow: 0 4px 18px rgba(45, 106, 79, .3)
+        }
+
+        .btn-p:hover {
+            background: var(--g1);
+            transform: translateY(-1px)
+        }
+
+        .btn-o {
+            background: transparent;
+            color: var(--g2);
+            border: 1.5px solid var(--g4)
+        }
+
+        .btn-o:hover {
+            background: var(--g6);
+            transform: translateY(-1px)
+        }
+
+        /* Hero visual */
+        .hv {
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden
+        }
+
+        .hv-top {
+            background: linear-gradient(135deg, var(--g1), var(--g2));
+            padding: 13px 18px;
+            display: flex;
+            align-items: center;
+            gap: 7px
+        }
+
+        .hv-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .28)
+        }
+
+        .hv-label {
+            color: rgba(255, 255, 255, .85);
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 5px
+        }
+
+        .hv-body {
+            padding: 18px
+        }
+
+        .hv-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 9px;
+            margin-bottom: 14px
+        }
+
+        .hv-stat {
+            background: var(--off);
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            padding: 11px
+        }
+
+        .hv-sv {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--g2)
+        }
+
+        .hv-sl {
+            font-size: 10.5px;
+            color: var(--muted);
+            margin-top: 2px
+        }
+
+        .hv-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 13px
+        }
+
+        .hv-br {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .hv-bn {
+            font-size: 11px;
+            color: var(--mid);
+            width: 52px
+        }
+
+        .hv-bt {
+            flex: 1;
+            height: 6px;
+            background: var(--g6);
+            border-radius: 3px;
+            overflow: hidden
+        }
+
+        .hv-bf {
+            height: 100%;
+            border-radius: 3px;
+            background: linear-gradient(90deg, var(--g4), var(--g2))
+        }
+
+        .hv-bf.a {
+            background: linear-gradient(90deg, #f5c36e, var(--amber))
+        }
+
+        .hv-bf.r {
+            background: linear-gradient(90deg, #f08080, var(--red))
+        }
+
+        .hv-bv {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--mid);
+            width: 28px;
+            text-align: right
+        }
+
+        .hv-alerts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px
+        }
+
+        .hv-alert {
+            border-radius: 9px;
+            padding: 10px 12px;
+            font-size: 12px
+        }
+
+        .hv-alert.g {
+            background: var(--g6);
+            border: 1px solid var(--g5)
+        }
+
+        .hv-alert.a {
+            background: #fff8ec;
+            border: 1px solid #f5d4a0
+        }
+
+        .hv-at {
+            font-weight: 700;
+            margin-bottom: 2px
+        }
+
+        .hv-at.g {
+            color: var(--g2)
+        }
+
+        .hv-at.a {
+            color: #b07020
+        }
+
+        .hv-ab {
+            color: var(--mid)
+        }
+
+        /* Sections */
+        .lsec {
+            padding: 76px 5vw;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%
+        }
+
+        .sec-tag {
+            font-size: 11.5px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--g3);
+            margin-bottom: 10px
+        }
+
+        .sec-title {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(28px, 3.2vw, 42px);
+            line-height: 1.15;
+            letter-spacing: -.3px;
+            margin-bottom: 14px
+        }
+
+        .sec-sub {
+            font-size: 15px;
+            color: var(--mid);
+            line-height: 1.65;
+            max-width: 520px;
+            margin-bottom: 46px
+        }
+
+        /* Features */
+        .feat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px
+        }
+
+        @media(max-width:900px) {
+            .feat-grid {
+                grid-template-columns: 1fr 1fr
+            }
+        }
+
+        @media(max-width:600px) {
+            .feat-grid {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .feat-card {
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: 16px;
+            padding: 26px;
+            transition: all .2s
+        }
+
+        .feat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+            border-color: var(--g5)
+        }
+
+        .feat-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 13px;
+            background: var(--g6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 14px
+        }
+
+        .feat-title {
+            font-size: 15.5px;
+            font-weight: 700;
+            margin-bottom: 7px
+        }
+
+        .feat-body {
+            font-size: 13.5px;
+            color: var(--mid);
+            line-height: 1.65
+        }
+
+        /* How it works */
+        .how-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px
+        }
+
+        @media(max-width:700px) {
+            .how-grid {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .how-card {
+            text-align: center;
+            padding: 32px 24px;
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: 18px
+        }
+
+        .how-num {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--g2);
+            color: #fff;
+            font-size: 18px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px
+        }
+
+        .how-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px
+        }
+
+        .how-body {
+            font-size: 13.5px;
+            color: var(--mid);
+            line-height: 1.65
+        }
+
+        /* Pricing */
+        .plan-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 960px;
+            margin: 0 auto
+        }
+
+        @media(max-width:800px) {
+            .plan-grid {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .pc {
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: 18px;
+            padding: 30px 26px;
+            position: relative;
+            transition: all .2s
+        }
+
+        .pc:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg)
+        }
+
+        .pc.pop {
+            border-color: var(--g3);
+            box-shadow: 0 0 0 4px rgba(64, 145, 108, .09)
+        }
+
+        .pc-badge {
+            position: absolute;
+            top: -13px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--g2);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 16px;
+            border-radius: 20px;
+            white-space: nowrap;
+            letter-spacing: .3px
+        }
+
+        .pc-name {
+            font-family: 'Instrument Serif', serif;
+            font-size: 24px;
+            margin-bottom: 3px
+        }
+
+        .pc-desc {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 18px
+        }
+
+        .pc-price {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            margin-bottom: 18px
+        }
+
+        .pc-cur {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--muted);
+            padding-bottom: 5px
+        }
+
+        .pc-num {
+            font-size: 46px;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -2px
+        }
+
+        .pc-per {
+            font-size: 13px;
+            color: var(--muted);
+            padding-bottom: 6px
+        }
+
+        .pc-div {
+            height: 1px;
+            background: var(--border);
+            margin-bottom: 18px
+        }
+
+        .pc-feats {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            margin-bottom: 24px
+        }
+
+        .pc-feat {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 13.5px
+        }
+
+        .pf-yes {
+            color: var(--g3);
+            font-size: 15px;
+            flex-shrink: 0;
+            margin-top: 1px
+        }
+
+        .pf-no {
+            color: var(--border);
+            font-size: 15px;
+            flex-shrink: 0;
+            margin-top: 1px
+        }
+
+        .pf-no-txt {
+            color: var(--muted)
+        }
+
+        .pc-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-family: 'Figtree', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all .18s
+        }
+
+        .pc-outline {
+            background: transparent;
+            border: 1.5px solid var(--border);
+            color: var(--text)
+        }
+
+        .pc-outline:hover {
+            border-color: var(--g4);
+            color: var(--g2);
+            background: var(--g6)
+        }
+
+        .pc-green {
+            background: var(--g2);
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(45, 106, 79, .28)
+        }
+
+        .pc-green:hover {
+            background: var(--g1)
+        }
+
+        .pc-dark {
+            background: var(--g1);
+            color: #fff
+        }
+
+        .pc-dark:hover {
+            background: #0f2218
+        }
+
+        /* Footer */
+        footer {
+            background: var(--g1);
+            padding: 50px 5vw 30px;
+            margin-top: 72px
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto
+        }
+
+        .footer-logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px
+        }
+
+        .footer-logo em {
+            font-style: normal;
+            color: var(--g4)
+        }
+
+        .footer-tagline {
+            font-size: 13px;
+            color: rgba(255, 255, 255, .45);
+            margin-bottom: 0
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 28px auto 0;
+            padding-top: 22px;
+            border-top: 1px solid rgba(255, 255, 255, .1);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, .35)
+        }
+
+        /* ══════════════════
+   APP SHELL
+══════════════════ */
+        .sidebar {
+            width: var(--sw);
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 200;
+            background: var(--white);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            transition: transform .25s
+        }
+
+        .sb-logo {
+            padding: 18px 18px 14px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0
+        }
+
+        .sb-logo-box {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--g1), var(--g3));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Instrument Serif', serif;
+            font-size: 17px;
+            color: #fff;
+            box-shadow: 0 3px 10px rgba(26, 61, 43, .25);
+            flex-shrink: 0
+        }
+
+        .sb-logo-name {
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: -.3px
+        }
+
+        .sb-logo-name em {
+            font-style: normal;
+            color: var(--g3)
+        }
+
+        /* Plan badge — owner only */
+        .sb-plan {
+            margin: 11px 12px;
+            border-radius: 12px;
+            padding: 13px 15px;
+            background: linear-gradient(135deg, var(--g1), var(--g2));
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0
+        }
+
+        .sb-plan::after {
+            content: '';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .06)
+        }
+
+        .sb-plan-tag {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, .55);
+            margin-bottom: 2px
+        }
+
+        .sb-plan-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 1px
+        }
+
+        .sb-plan-desc {
+            font-size: 11.5px;
+            color: rgba(255, 255, 255, .62)
+        }
+
+        .sb-plan-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 9px;
+            background: rgba(255, 255, 255, .14);
+            color: #fff;
+            font-size: 11.5px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, .22);
+            font-family: 'Figtree', sans-serif;
+            transition: background .15s
+        }
+
+        .sb-plan-btn:hover {
+            background: rgba(255, 255, 255, .24)
+        }
+
+        /* Farmer invite notice */
+        .sb-farmer-note {
+            margin: 11px 12px;
+            border-radius: 12px;
+            padding: 12px 14px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            flex-shrink: 0
+        }
+
+        .sb-farmer-note-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--blue);
+            margin-bottom: 3px
+        }
+
+        .sb-farmer-note-body {
+            font-size: 11.5px;
+            color: #3b5bdb;
+            line-height: 1.45
+        }
+
+        .sb-nav {
+            flex: 1;
+            padding: 8px 10px;
+            overflow-y: auto
+        }
+
+        .sb-sec-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.3px;
+            text-transform: uppercase;
+            color: var(--muted);
+            padding: 10px 10px 5px;
+            margin-top: 4px
+        }
+
+        .ni {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-size: 13.5px;
+            font-weight: 500;
+            color: var(--mid);
+            transition: all .15s;
+            margin-bottom: 1px;
+            position: relative;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-family: 'Figtree', sans-serif
+        }
+
+        .ni:hover {
+            background: var(--g6);
+            color: var(--g2)
+        }
+
+        .ni.act {
+            background: var(--g6);
+            color: var(--g2);
+            font-weight: 600
+        }
+
+        .ni.act::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 25%;
+            height: 50%;
+            width: 3px;
+            background: var(--g3);
+            border-radius: 0 3px 3px 0
+        }
+
+        .ni svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            opacity: .65
+        }
+
+        .ni.act svg,
+        .ni:hover svg {
+            opacity: 1
+        }
+
+        .ni-badge {
+            margin-left: auto;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 20px
+        }
+
+        .ni-badge.red {
+            background: var(--red);
+            color: #fff
+        }
+
+        .ni-badge.grn {
+            background: var(--g3);
+            color: #fff
+        }
+
+        /* Role-based visibility */
+        .owner-only,
+        .farmer-only {
+            display: none !important
+        }
+
+        .role-owner .owner-only {
+            display: flex !important
+        }
+
+        .role-farmer .farmer-only {
+            display: flex !important
+        }
+
+        .sb-sec-label.owner-only,
+        .sb-sec-label.farmer-only {
+            display: none !important
+        }
+
+        .role-owner .sb-sec-label.owner-only {
+            display: block !important
+        }
+
+        .role-farmer .sb-sec-label.farmer-only {
+            display: block !important
+        }
+
+        .sb-user {
+            padding: 12px 14px;
+            border-top: 1px solid var(--border);
+            flex-shrink: 0
+        }
+
+        .sb-user-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 9px;
+            cursor: pointer;
+            transition: background .15s
+        }
+
+        .sb-user-row:hover {
+            background: var(--g6)
+        }
+
+        .sb-ava {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--g4), var(--g2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 13px;
+            flex-shrink: 0
+        }
+
+        .sb-uname {
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.2
+        }
+
+        .sb-uemail {
+            font-size: 11px;
+            color: var(--muted)
+        }
+
+        .sb-role-pill {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 20px;
+            margin-left: auto;
+            flex-shrink: 0
+        }
+
+        .sb-role-pill.owner {
+            background: var(--g6);
+            color: var(--g2)
+        }
+
+        .sb-role-pill.farmer {
+            background: #eff6ff;
+            color: var(--blue)
+        }
+
+        /* Topbar */
+        .topbar {
+            margin-left: var(--sw);
+            height: var(--th);
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 26px;
+            position: sticky;
+            top: 0;
+            z-index: 100
+        }
+
+        .tb-left {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .tb-title {
+            font-family: 'Instrument Serif', serif;
+            font-size: 22px;
+            letter-spacing: -.3px
+        }
+
+        .tb-live {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--muted)
+        }
+
+        .tb-live-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--g3);
+            animation: pulse 2s infinite
+        }
+
+        .tb-search {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: var(--off);
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            min-width: 220px;
+            transition: all .18s
+        }
+
+        .tb-search:focus-within {
+            border-color: var(--g4);
+            box-shadow: 0 0 0 3px rgba(64, 145, 108, .1)
+        }
+
+        .tb-search input {
+            border: none;
+            background: none;
+            outline: none;
+            font-family: 'Figtree', sans-serif;
+            font-size: 13.5px;
+            color: var(--text);
+            width: 100%
+        }
+
+        .tb-search input::placeholder {
+            color: var(--muted)
+        }
+
+        .tb-right {
+            display: flex;
+            align-items: center;
+            gap: 7px
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
+            background: var(--off);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .15s;
+            position: relative
+        }
+
+        .icon-btn:hover {
+            background: var(--g6);
+            border-color: var(--g5)
+        }
+
+        .icon-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--mid)
+        }
+
+        .n-dot {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--red);
+            border: 2px solid var(--white)
+        }
+
+        /* Content */
+        .app-content {
+            margin-left: var(--sw);
+            padding: 26px 28px;
+            min-height: calc(100vh - var(--th))
+        }
+
+        .sec {
+            display: none
+        }
+
+        .sec.act {
+            display: block;
+            animation: fi .3s ease
+        }
+
+        /* Cards */
+        .card {
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: var(--r);
+            padding: 20px
+        }
+
+        .ch {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px
+        }
+
+        .ct {
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: -.2px
+        }
+
+        .clink {
+            font-size: 12.5px;
+            color: var(--g2);
+            font-weight: 600;
+            cursor: pointer;
+            padding: 4px 10px;
+            border-radius: 7px;
+            border: none;
+            background: none;
+            font-family: 'Figtree', sans-serif;
+            transition: background .15s
+        }
+
+        .clink:hover {
+            background: var(--g6)
+        }
+
+        /* Stat grid */
+        .stat-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px
+        }
+
+        @media(max-width:1100px) {
+            .stat-row {
+                grid-template-columns: repeat(2, 1fr)
+            }
+        }
+
+        .sc {
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: var(--r);
+            padding: 17px 19px;
+            transition: all .2s
+        }
+
+        .sc:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg)
+        }
+
+        .sc-hd {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 12px
+        }
+
+        .sc-ic {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px
+        }
+
+        .sc-ic.g {
+            background: var(--g6)
+        }
+
+        .sc-ic.a {
+            background: #fff8ec
+        }
+
+        .sc-ic.r {
+            background: #fef2f2
+        }
+
+        .sc-ic.b {
+            background: #eff6ff
+        }
+
+        .sc-trend {
+            font-size: 11.5px;
+            font-weight: 600;
+            padding: 3px 9px;
+            border-radius: 20px
+        }
+
+        .sc-trend.up {
+            background: var(--g6);
+            color: var(--g2)
+        }
+
+        .sc-trend.dn {
+            background: #fef2f2;
+            color: var(--red)
+        }
+
+        .sc-trend.warn {
+            background: #fff8ec;
+            color: #b07020
+        }
+
+        .sc-val {
+            font-family: 'Instrument Serif', serif;
+            font-size: 30px;
+            line-height: 1
+        }
+
+        .sc-lbl {
+            font-size: 12.5px;
+            color: var(--muted);
+            margin-top: 4px
+        }
+
+        /* Weather bar */
+        .wb {
+            background: linear-gradient(140deg, var(--g1), var(--g2) 55%, var(--g3));
+            border-radius: var(--r);
+            padding: 18px 26px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 14px;
+            position: relative;
+            overflow: hidden
+        }
+
+        .wb::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: 80px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .05)
+        }
+
+        .wb-main {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            position: relative
+        }
+
+        .wb-emoji {
+            font-size: 50px;
+            line-height: 1
+        }
+
+        .wb-temp {
+            font-family: 'Instrument Serif', serif;
+            font-size: 40px;
+            line-height: 1
+        }
+
+        .wb-desc {
+            font-size: 14px;
+            opacity: .85;
+            margin-top: 2px
+        }
+
+        .wb-loc {
+            font-size: 12px;
+            opacity: .55;
+            margin-top: 2px
+        }
+
+        .wb-stats {
+            display: flex;
+            gap: 22px;
+            position: relative
+        }
+
+        .wb-sv {
+            font-size: 19px;
+            font-weight: 800;
+            line-height: 1
+        }
+
+        .wb-sl {
+            font-size: 11.5px;
+            opacity: .6;
+            margin-top: 2px
+        }
+
+        .wb-fc {
+            display: flex;
+            gap: 7px;
+            position: relative
+        }
+
+        .wb-day {
+            text-align: center;
+            padding: 7px 10px;
+            background: rgba(255, 255, 255, .1);
+            border-radius: 9px;
+            min-width: 46px
+        }
+
+        .wb-dn {
+            font-size: 10px;
+            opacity: .6
+        }
+
+        .wb-di {
+            font-size: 17px;
+            margin: 3px 0
+        }
+
+        .wb-dt {
+            font-size: 12px;
+            font-weight: 600
+        }
+
+        /* Main dashboard grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 300px;
+            gap: 16px;
+            margin-bottom: 20px
+        }
+
+        @media(max-width:1280px) {
+            .main-grid {
+                grid-template-columns: 1fr 1fr
+            }
+        }
+
+        @media(max-width:900px) {
+            .main-grid {
+                grid-template-columns: 1fr
+            }
+        }
+
+        /* Zone cards */
+        .zone-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px
+        }
+
+        .zc {
+            border: 1.5px solid var(--border);
+            border-radius: 11px;
+            padding: 13px;
+            cursor: pointer;
+            transition: all .18s;
+            position: relative
+        }
+
+        .zc:hover {
+            border-color: var(--g5);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow)
+        }
+
+        .zc.ok {
+            border-left: 3px solid var(--g3)
+        }
+
+        .zc.warn {
+            border-left: 3px solid var(--amber)
+        }
+
+        .zc.alert {
+            border-left: 3px solid var(--red)
+        }
+
+        .zc-name {
+            font-size: 13px;
+            font-weight: 700
+        }
+
+        .zc-crop {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 1px
+        }
+
+        .zc-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 20px
+        }
+
+        .zc-badge.ok {
+            background: var(--g6);
+            color: var(--g2)
+        }
+
+        .zc-badge.warn {
+            background: #fff8ec;
+            color: #b07020
+        }
+
+        .zc-badge.alert {
+            background: #fef2f2;
+            color: var(--red)
+        }
+
+        .zc-row {
+            display: flex;
+            gap: 9px;
+            margin-top: 10px
+        }
+
+        .zci {
+            flex: 1
+        }
+
+        .zci-v {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 500
+        }
+
+        .zci-k {
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 1px
+        }
+
+        /* Bar list */
+        .blist {
+            display: flex;
+            flex-direction: column;
+            gap: 9px
+        }
+
+        .brow {
+            display: flex;
+            align-items: center;
+            gap: 9px
+        }
+
+        .blbl {
+            font-size: 12px;
+            color: var(--mid);
+            width: 54px;
+            flex-shrink: 0
+        }
+
+        .btrack {
+            flex: 1;
+            height: 7px;
+            background: var(--off);
+            border-radius: 4px;
+            overflow: hidden
+        }
+
+        .bfill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, var(--g4), var(--g2));
+            transition: width 1s cubic-bezier(.4, 0, .2, 1)
+        }
+
+        .bfill.a {
+            background: linear-gradient(90deg, #f5c36e, var(--amber))
+        }
+
+        .bfill.r {
+            background: linear-gradient(90deg, #f08080, var(--red))
+        }
+
+        .bval {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--mid);
+            width: 30px;
+            text-align: right
+        }
+
+        /* Ticket list */
+        .tklist {
+            display: flex;
+            flex-direction: column;
+            gap: 7px
+        }
+
+        .tki {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 11px;
+            background: var(--off);
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            cursor: pointer;
+            transition: all .15s
+        }
+
+        .tki:hover {
+            border-color: var(--g5);
+            background: var(--g6)
+        }
+
+        .tk-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 4px
+        }
+
+        .tk-dot.h {
+            background: var(--red);
+            box-shadow: 0 0 0 3px rgba(214, 64, 69, .15)
+        }
+
+        .tk-dot.m {
+            background: var(--amber);
+            box-shadow: 0 0 0 3px rgba(233, 168, 76, .15)
+        }
+
+        .tk-dot.l {
+            background: var(--g3);
+            box-shadow: 0 0 0 3px rgba(64, 145, 108, .15)
+        }
+
+        .tk-title {
+            font-size: 13px;
+            font-weight: 600
+        }
+
+        .tk-meta {
+            font-size: 11.5px;
+            color: var(--muted);
+            margin-top: 2px
+        }
+
+        .tk-st {
+            margin-left: auto;
+            font-size: 10.5px;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 20px;
+            flex-shrink: 0
+        }
+
+        .tk-st.open {
+            background: #fef2f2;
+            color: var(--red)
+        }
+
+        .tk-st.done {
+            background: var(--g6);
+            color: var(--g2)
+        }
+
+        /* Harvest */
+        .hlist {
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+        .hrow {
+            display: flex;
+            align-items: center;
+            gap: 9px
+        }
+
+        .hdot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0
+        }
+
+        .hdot.g {
+            background: var(--g5);
+            border: 2px solid var(--g3)
+        }
+
+        .hdot.s {
+            background: var(--amber);
+            border: 2px solid var(--amber)
+        }
+
+        .hinfo {
+            flex: 0 0 130px;
+            min-width: 0
+        }
+
+        .hz {
+            font-size: 12.5px;
+            font-weight: 600;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap
+        }
+
+        .hc {
+            font-size: 11px;
+            color: var(--muted)
+        }
+
+        .hbt {
+            flex: 1;
+            height: 6px;
+            background: var(--off);
+            border-radius: 3px;
+            overflow: hidden
+        }
+
+        .hbf {
+            height: 100%;
+            border-radius: 3px;
+            background: linear-gradient(90deg, var(--g5), var(--g2))
+        }
+
+        .hdate {
+            font-size: 11.5px;
+            color: var(--muted);
+            width: 44px;
+            text-align: right
+        }
+
+        /* Activity */
+        .alist {
+            display: flex;
+            flex-direction: column
+        }
+
+        .ai {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .ai:last-child {
+            border-bottom: none
+        }
+
+        .ai-ic {
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            flex-shrink: 0
+        }
+
+        .ai-title {
+            font-size: 13.5px;
+            font-weight: 600
+        }
+
+        .ai-sub {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 1px
+        }
+
+        .ai-tag {
+            font-size: 10.5px;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 20px;
+            flex-shrink: 0;
+            margin-left: auto
+        }
+
+        .ai-tag.auto {
+            background: #eff6ff;
+            color: var(--blue)
+        }
+
+        .ai-tag.manual {
+            background: var(--g6);
+            color: var(--g2)
+        }
+
+        .ai-tag.ai {
+            background: #fff8ec;
+            color: #b07020
+        }
+
+        /* AI Recs */
+        .rec {
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 9px
+        }
+
+        .rec:last-child {
+            margin-bottom: 0
+        }
+
+        .rec-t {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 3px
+        }
+
+        .rec-b {
+            font-size: 12.5px;
+            line-height: 1.55;
+            color: var(--mid)
+        }
+
+        .rec.g {
+            background: var(--g6);
+            border: 1px solid var(--g5)
+        }
+
+        .rec.a {
+            background: #fff8ec;
+            border: 1px solid #f5d4a0
+        }
+
+        .rec.b {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe
+        }
+
+        /* Donut */
+        .donut-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 6px 0
+        }
+
+        .donut-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 8px
+        }
+
+        .dli {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px
+        }
+
+        .dld {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0
+        }
+
+        /* Irrigation toggles */
+        .irr-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px
+        }
+
+        .iz {
+            background: var(--off);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 13px
+        }
+
+        .iz.warn {
+            border-color: var(--amber)
+        }
+
+        .iz.alert {
+            border-color: var(--red)
+        }
+
+        .iz-name {
+            font-size: 12.5px;
+            font-weight: 700
+        }
+
+        .iz-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 21px;
+            font-weight: 500;
+            color: var(--g2);
+            margin: 3px 0
+        }
+
+        .iz-status {
+            font-size: 11px
+        }
+
+        .iz-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px
+        }
+
+        .tog {
+            width: 36px;
+            height: 20px;
+            border-radius: 10px;
+            background: var(--border);
+            position: relative;
+            cursor: pointer;
+            border: none;
+            transition: background .2s;
+            flex-shrink: 0
+        }
+
+        .tog.on {
+            background: var(--g3)
+        }
+
+        .tog::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform .2s;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .18)
+        }
+
+        .tog.on::after {
+            transform: translateX(16px)
+        }
+
+        .tog-lbl {
+            font-size: 12px;
+            color: var(--muted)
+        }
+
+        /* Water chart */
+        .wchart {
+            display: flex;
+            align-items: flex-end;
+            gap: 5px;
+            height: 70px;
+            margin-top: 10px
+        }
+
+        .wc-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            gap: 4px
+        }
+
+        .wbar {
+            width: 100%;
+            border-radius: 4px 4px 0 0;
+            background: linear-gradient(to top, var(--g3), var(--g5));
+            opacity: .8;
+            transition: opacity .2s
+        }
+
+        .wbar:hover {
+            opacity: 1
+        }
+
+        .wl {
+            font-size: 10px;
+            color: var(--muted)
+        }
+
+        /* Tables */
+        .tbl {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px
+        }
+
+        .tbl th {
+            padding: 11px 14px;
+            text-align: left;
+            font-size: 11.5px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            border-bottom: 1.5px solid var(--border);
+            background: var(--off)
+        }
+
+        .tbl td {
+            padding: 12px 14px;
+            border-top: 1px solid var(--border)
+        }
+
+        .tbl tr:hover td {
+            background: var(--g6)
+        }
+
+        .tag {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 6px;
+            margin-right: 3px
+        }
+
+        .tag.g {
+            background: var(--g6);
+            color: var(--g2)
+        }
+
+        .tag.a {
+            background: #fff8ec;
+            color: #b07020
+        }
+
+        .tag.r {
+            background: #fef2f2;
+            color: var(--red)
+        }
+
+        /* AI Diagnosis */
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 38px;
+            text-align: center;
+            cursor: pointer;
+            transition: all .2s;
+            margin-bottom: 16px
+        }
+
+        .upload-zone:hover {
+            border-color: var(--g4);
+            background: var(--g6)
+        }
+
+        .fsel {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-family: 'Figtree', sans-serif;
+            font-size: 14px;
+            color: var(--text);
+            background: var(--white);
+            outline: none;
+            transition: all .18s
+        }
+
+        .fsel:focus {
+            border-color: var(--g3);
+            box-shadow: 0 0 0 3px rgba(64, 145, 108, .1)
+        }
+
+        /* Farmer tasks */
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--off);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            transition: all .15s
+        }
+
+        .task-item:hover {
+            border-color: var(--g5)
+        }
+
+        .task-cb {
+            width: 20px;
+            height: 20px;
+            border-radius: 5px;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .15s;
+            font-size: 11px
+        }
+
+        .task-cb.done {
+            background: var(--g3);
+            border-color: var(--g3);
+            color: #fff
+        }
+
+        /* Plan cards in app */
+        .app-plan-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            max-width: 920px;
+            margin: 0 auto 36px
+        }
+
+        @media(max-width:900px) {
+            .app-plan-grid {
+                grid-template-columns: 1fr
+            }
+        }
+
+        /* Comparison table */
+        .cmp-tbl {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13.5px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--r);
+            overflow: hidden;
+            max-width: 920px;
+            margin: 0 auto
+        }
+
+        .cmp-tbl th {
+            padding: 12px 16px;
+            background: var(--g6);
+            font-weight: 700;
+            text-align: center;
+            color: var(--g2)
+        }
+
+        .cmp-tbl th:first-child {
+            text-align: left;
+            background: var(--off);
+            color: var(--text)
+        }
+
+        .cmp-tbl td {
+            padding: 11px 16px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--mid)
+        }
+
+        .cmp-tbl td:first-child {
+            text-align: left;
+            font-weight: 500;
+            color: var(--text)
+        }
+
+        .cmp-tbl tr:hover td {
+            background: var(--g6)
+        }
+
+        /* Mobile sidebar */
+        .sb-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .38);
+            z-index: 150
+        }
+
+        .mob-toggle {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 300;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--g2);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(45, 106, 79, .4);
+            align-items: center;
+            justify-content: center
+        }
+
+        .mob-toggle svg {
+            stroke: #fff;
+            width: 22px;
+            height: 22px
+        }
+
+        @media(max-width:768px) {
+            .sidebar {
+                transform: translateX(-100%)
+            }
+
+            .sidebar.open {
+                transform: translateX(0)
+            }
+
+            .topbar,
+            .app-content {
+                margin-left: 0
+            }
+
+            .stat-row {
+                grid-template-columns: 1fr 1fr
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr
+            }
+
+            .mob-toggle {
+                display: flex
+            }
+
+            .sb-overlay.open {
+                display: block
+            }
+
+            .tb-search {
+                display: none
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ═══════════════════════════════
+     LANDING
+═══════════════════════════════ -->
+    <div id="pg-land" class="page on anim">
+        <nav class="lnav">
+            <div class="lnav-logo" onclick="go('pg-land')">
+                <div class="lnav-icon">Z</div>
+                <div class="lnav-name">Zone<em>Sync</em></div>
+            </div>
+            <div class="lnav-links">
+                <button class="lnav-btn"
+                    onclick="document.getElementById('feats').scrollIntoView({behavior:'smooth'})">المميزات</button>
+                <button class="lnav-btn"
+                    onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">الأسعار</button>
+                <button class="lnav-btn" onclick="go('pg-login')">تسجيل الدخول</button>
+                <button class="lnav-btn lnav-cta" onclick="go('pg-register')">ابدأ مجاناً ←</button>
+            </div>
+        </nav>
+
+        <div class="hero">
+            <div>
+                <div class="hero-badge"><span class="live-dot"></span>منصة الزراعة الذكية</div>
+                <h1>إدارة مزرعتك بـ<em>ذكاء</em> حقيقي</h1>
+                <p>ZoneSync تراقب محاصيلك بشكل مستمر، تشغّل الري تلقائياً، تكتشف أمراض النباتات بالذكاء الاصطناعي — كل
+                    ده في مكان واحد.</p>
+                <div class="hero-btns">
+                    <button class="btn btn-p" onclick="go('pg-register')">🌱 سجّل مجاناً</button>
+                    <button class="btn btn-o" onclick="go('pg-login')">دخول لوحة التحكم</button>
+                </div>
+            </div>
+            <div class="hv">
+                <div class="hv-top">
+                    <div class="hv-dot"></div>
+                    <div class="hv-dot"></div>
+                    <div class="hv-dot"></div><span class="hv-label">ZoneSync Dashboard — معاينة مباشرة</span>
+                </div>
+                <div class="hv-body">
+                    <div class="hv-stats">
+                        <div class="hv-stat">
+                            <div class="hv-sv">6</div>
+                            <div class="hv-sl">مناطق نشطة</div>
+                        </div>
+                        <div class="hv-stat">
+                            <div class="hv-sv">76%</div>
+                            <div class="hv-sl">متوسط الصحة</div>
+                        </div>
+                        <div class="hv-stat">
+                            <div class="hv-sv" style="color:var(--amber)">3</div>
+                            <div class="hv-sl">تذاكر مفتوحة</div>
+                        </div>
+                    </div>
+                    <div style="font-size:11.5px;font-weight:700;color:var(--muted);margin-bottom:9px">رطوبة التربة
+                    </div>
+                    <div class="hv-bars">
+                        <div class="hv-br"><span class="hv-bn">منطقة #001</span>
+                            <div class="hv-bt">
+                                <div class="hv-bf" style="width:72%"></div>
+                            </div><span class="hv-bv">72%</span>
+                        </div>
+                        <div class="hv-br"><span class="hv-bn">منطقة #002</span>
+                            <div class="hv-bt">
+                                <div class="hv-bf a" style="width:38%"></div>
+                            </div><span class="hv-bv">38%</span>
+                        </div>
+                        <div class="hv-br"><span class="hv-bn">منطقة #003</span>
+                            <div class="hv-bt">
+                                <div class="hv-bf" style="width:65%"></div>
+                            </div><span class="hv-bv">65%</span>
+                        </div>
+                        <div class="hv-br"><span class="hv-bn">منطقة #004</span>
+                            <div class="hv-bt">
+                                <div class="hv-bf r" style="width:22%"></div>
+                            </div><span class="hv-bv" style="color:var(--red)">22%</span>
+                        </div>
+                    </div>
+                    <div class="hv-alerts">
+                        <div class="hv-alert g">
+                            <div class="hv-at g">🤖 تنبيه ذكاء اصطناعي</div>
+                            <div class="hv-ab">منطقة #004 تحتاج ري فوري</div>
+                        </div>
+                        <div class="hv-alert a">
+                            <div class="hv-at a">🌾 موعد حصاد</div>
+                            <div class="hv-ab">منطقة #002 بعد 12 يوم</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="lsec" id="feats">
+            <div class="sec-tag">المميزات</div>
+            <div class="sec-title">كل اللي محتاجه في مزرعتك</div>
+            <div class="sec-sub">من مراقبة الحساسات لحظياً لتشخيص أمراض النبات بالذكاء الاصطناعي — ZoneSync بيغطي
+                العملية كاملة.</div>
+            <div class="feat-grid">
+                <div class="feat-card">
+                    <div class="feat-icon">📊</div>
+                    <div class="feat-title">لوحة تحكم ذكية</div>
+                    <div class="feat-body">نظرة شاملة على كل المناطق — الرطوبة، صحة المحصول، الطقس، ومواعيد الحصاد في
+                        مكان واحد.</div>
+                </div>
+                <div class="feat-card">
+                    <div class="feat-icon">🤖</div>
+                    <div class="feat-title">تشخيص النبات بالذكاء الاصطناعي</div>
+                    <div class="feat-body">صوّر النبات المريض وهتعرف المشكلة والحل في ثواني + أقرب وحدة بحوث زراعية.
+                    </div>
+                </div>
+                <div class="feat-card">
+                    <div class="feat-icon">💧</div>
+                    <div class="feat-title">ري تلقائي</div>
+                    <div class="feat-body">حدّد حد الرطوبة والنظام يشغل الري لوحده. تحكم يدوي في كل منطقة أو الكل مرة
+                        واحدة.</div>
+                </div>
+                <div class="feat-card">
+                    <div class="feat-icon">🎫</div>
+                    <div class="feat-title">نظام التذاكر</div>
+                    <div class="feat-body">تتبع كل مشكلة — سواء اكتشفها الذكاء الاصطناعي أو سجلتها يدوياً — بدرجة
+                        الخطورة والحالة.</div>
+                </div>
+                <div class="feat-card">
+                    <div class="feat-icon">📡</div>
+                    <div class="feat-title">قراءات الحساسات</div>
+                    <div class="feat-body">مراقبة لحظية للحرارة، درجة الحموضة، رطوبة التربة، وعناصر NPK (نيتروجين،
+                        فوسفور، بوتاسيوم).</div>
+                </div>
+                <div class="feat-card">
+                    <div class="feat-icon">📄</div>
+                    <div class="feat-title">تقارير PDF</div>
+                    <div class="feat-body">صدّر تقرير احترافي بكل القراءات والأنشطة والتشخيصات لأي منطقة وأي فترة زمنية.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="lsec" style="padding-top:0">
+            <div class="sec-tag">كيف يشتغل</div>
+            <div class="sec-title">ثلاث خطوات بس</div>
+            <div class="how-grid">
+                <div class="how-card">
+                    <div class="how-num">1</div>
+                    <div class="how-title">المالك يسجل ويضيف مناطقه</div>
+                    <div class="how-body">بتسجل حسابك كمالك، بتضيف المناطق الزراعية وبتربطها بالحساسات بتاعتها.</div>
+                </div>
+                <div class="how-card">
+                    <div class="how-num">2</div>
+                    <div class="how-title">بيضيف الفريق بتاعه</div>
+                    <div class="how-body">من لوحة التحكم بيضيف الفلاحين والمشرفين ويحدد كل واحد يشتغل على انهي مناطق.
+                    </div>
+                </div>
+                <div class="how-card">
+                    <div class="how-num">3</div>
+                    <div class="how-title">النظام يشتغل لوحده</div>
+                    <div class="how-body">الحساسات بتبعت البيانات، الري بيتشغل تلقائي، والذكاء الاصطناعي بيراقب صحة
+                        المحاصيل.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="lsec" id="pricing" style="padding-top:0">
+            <div style="text-align:center;margin-bottom:46px">
+                <div class="sec-tag" style="text-align:center">الأسعار</div>
+                <div class="sec-title" style="text-align:center">اختار الباقة المناسبة</div>
+            </div>
+            <div class="plan-grid">
+                <div class="pc">
+                    <div class="pc-name">مجاني</div>
+                    <div class="pc-desc">للبداية والتجربة</div>
+                    <div class="pc-price"><span class="pc-cur">$</span><span class="pc-num">0</span><span
+                            class="pc-per">/شهر</span></div>
+                    <div class="pc-div"></div>
+                    <div class="pc-feats">
+                        <div class="pc-feat"><span class="pf-yes">✓</span> 3 مناطق</div>
+                        <div class="pc-feat"><span class="pf-yes">✓</span> لوحة تحكم أساسية</div>
+                        <div class="pc-feat"><span class="pf-yes">✓</span> ري يدوي</div>
+                        <div class="pc-feat"><span class="pf-yes">✓</span> 5 تشخيصات ذكاء اصطناعي / شهر</div>
+                        <div class="pc-feat"><span class="pf-no">✗</span><span class="pf-no-txt"> ري تلقائي</span></div>
+                        <div class="pc-feat"><span class="pf-no">✗</span><span class="pf-no-txt"> تصدير PDF</span></div>
+                    </div>
+                    <button class="pc-btn pc-outline" onclick="go('pg-register')">ابدأ مجاناً</button>
+                </div>
+                <div class="pc pop">
+                    <div class="pc-badge">⭐ الأكثر شعبية</div>
+                    <div class="pc-name" style="color:var(--g2)">برايم</div>
+                    <div class="pc-desc">للمزارع الجادة</div>
+                    <div class="pc-price" style="color:var(--g2)"><span class="pc-cur">$</span><span
+                            class="pc-num">29</span><span class="pc-per">/شهر</span></div>
+                    <div class="pc-div"></div>
+                    <div class="pc-feats">
+                        <div class="pc-feat"><span class="pf-yes">✓</span> 15 منطقة</div>
+                        <div class="pc-feat"><span class="pf-yes">✓</span> لوحة تحكم كاملة</div>
+                        <div class="pc-feat"><span class="pf-yes">✓</span> <strong>ري تلقائي</strong></div>
+                        <div class="pc-feat"><span class="pf-yes">✓</span> تشخيصات بلا حد</div>
+                        <div class="pc-feat"><span class="pf-yes">✓</span> تصدير PDF</div>
+                        <div class="pc-feat"><span class="pf-yes">✓</span> إدارة الفريق (3 أعضاء)</div>
+                    </div>
+                    <button class="pc-btn pc-green" onclick="go('pg-register')">ابدأ تجربة برايم ←</button>
+                </div>
+                <div class="pc">
+                    <div class="pc-name">بيزنس</div>
+                    <div class="pc-desc">للشركات والمشاريع الكبيرة</div>
+                    <div class="pc-price"><span class="pc-cur">$</span><span class="pc-num">99</span><span
+                            class="pc-per">/شهر</span></div>
+                    <div class="pc-div"></div>
+                    <div class="pc-feats">
+                        <div class="pc-feat"><span class="pf-yes">✓</span> <strong>مناطق بلا حد</strong></div>
+                        <div class="pc-feat"><span class="pf-yes">✓</span> كل مميزات برايم</div>
+                        <div class="pc-feat"><span class="pf-yes">✓</span> فريق بلا حد</div>
+                        <div class="pc-feat"><span class="pf-yes">✓</span> أكثر من مالك</div>
+                        <div class="pc-feat"><span class="pf-yes">✓</span> دعم فني مخصص</div>
+                    </div>
+                    <button class="pc-btn pc-dark" onclick="go('pg-register')">احجز عرضاً →</button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-inner">
+                <div class="footer-logo">Zone<em>Sync</em></div>
+                <div class="footer-tagline">إدارة زراعية ذكية مدعومة بالذكاء الاصطناعي وبيانات الحساسات الفورية.</div>
+            </div>
+            <div class="footer-bottom"><span>© 2025 ZoneSync. جميع الحقوق محفوظة.</span><span>سياسة الخصوصية · الشروط
+                    والأحكام</span></div>
+        </footer>
+    </div>
+
+    <!-- ═══════════════════════════════
+     تسجيل الدخول
+═══════════════════════════════ -->
+    <div id="pg-login" class="page anim">
+        <div class="auth-grid">
+            <div class="auth-panel">
+                <div class="ap-blob" style="width:320px;height:320px;top:-80px;right:-80px"></div>
+                <div class="ap-blob" style="width:200px;height:200px;bottom:-50px;left:-50px"></div>
+                <div class="ap-logo">
+                    <div class="ap-logo-box">Z</div><span class="ap-logo-name">ZoneSync</span>
+                </div>
+                <div class="ap-mid">
+                    <h2>أهلاً بك في لوحة التحكم الذكية</h2>
+                    <p>راقب محاصيلك، تحكم في الري، واكتشف المشاكل قبل ما تحصل.</p>
+                    <div class="ap-stats">
+                        <div>
+                            <div class="ap-stat-n">2,400+</div>
+                            <div class="ap-stat-l">مستخدم نشط</div>
+                        </div>
+                        <div>
+                            <div class="ap-stat-n">18k+</div>
+                            <div class="ap-stat-l">منطقة مراقبة</div>
+                        </div>
+                        <div>
+                            <div class="ap-stat-n">99.8%</div>
+                            <div class="ap-stat-l">وقت التشغيل</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ap-bottom">
+                    <div class="ap-card">
+                        <p>"ZoneSync قلل استهلاك المياه 40% وزاد الإنتاجية. التشخيص بالذكاء الاصطناعي وفّر علينا آلاف
+                            الجنيهات."</p>
+                        <div class="ap-author">
+                            <div class="ap-ava">خم</div>
+                            <div>
+                                <div class="ap-name">خالد محمود</div>
+                                <div class="ap-role">مالك مشروع · الفيوم</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="auth-form-wrap">
+                <div class="auth-inner">
+                    <div class="auth-mobile-logo">
+                        <div class="auth-mobile-logo-box">Z</div><span>ZoneSync</span>
+                    </div>
+                    <button class="back-link" onclick="go('pg-land')">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7" />
+                        </svg>
+                        الرجوع للرئيسية
+                    </button>
+                    <div class="auth-h">تسجيل الدخول</div>
+                    <div class="auth-sub">ليس لديك حساب؟ <span class="lnk" onclick="go('pg-register')">سجّل
+                            مجاناً</span></div>
+                    <div class="alert-box err" id="login-err">البريد الإلكتروني أو كلمة المرور غير صحيحة.</div>
+                    <div class="social-row" style="margin-bottom:4px">
+                        <button class="s-btn"><svg width="18" height="18" viewBox="0 0 24 24">
+                                <path fill="#4285F4"
+                                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                                <path fill="#34A853"
+                                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                                <path fill="#FBBC05"
+                                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                                <path fill="#EA4335"
+                                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.47 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                            </svg>Google</button>
+                        <button class="s-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+                            </svg>GitHub</button>
+                    </div>
+                    <div class="auth-divider">أو بالبريد الإلكتروني</div>
+                    <div class="fg"><label class="fl">البريد الإلكتروني</label><input class="fi" type="email"
+                            placeholder="you@farm.com" id="l-email"></div>
+                    <div class="fg">
+                        <div class="frow"><label class="fl" style="margin:0">كلمة المرور</label><button class="f-link"
+                                onclick="go('pg-forgot')">نسيت كلمة المرور؟</button></div>
+                        <div class="fi-wrap"><input class="fi" type="password" placeholder="أدخل كلمة المرور"
+                                id="l-pw"><button class="fi-eye" onclick="eyeToggle('l-pw',this)">👁</button></div>
+                    </div>
+                    <label class="fcheck"><input type="checkbox" checked> ابقاني مسجل الدخول</label>
+                    <button class="fsubmit" onclick="doLogin()">تسجيل الدخول ←</button>
+
+                    <!-- ملاحظة مهمة للفلاحين -->
+                    <div
+                        style="margin-top:20px;padding:14px 16px;background:var(--off);border:1.5px solid var(--border);border-radius:11px;font-size:13px;color:var(--mid);line-height:1.6">
+                        <strong style="color:var(--text);display:block;margin-bottom:3px">👨‍🌾 هل أنت فلاح أو عضو
+                            فريق؟</strong>
+                        دخولك بيتم عن طريق دعوة من المالك بتاعك بس. لو مجاش ليك رابط دعوة على إيميلك، تواصل مع المالك.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════
+     إنشاء حساب (مالك فقط)
+═══════════════════════════════ -->
+    <div id="pg-register" class="page anim">
+        <div class="auth-grid">
+            <div class="auth-panel">
+                <div class="ap-blob" style="width:280px;height:280px;top:-60px;right:-60px"></div>
+                <div class="ap-blob" style="width:180px;height:180px;bottom:-40px;left:-40px"></div>
+                <div class="ap-logo">
+                    <div class="ap-logo-box">Z</div><span class="ap-logo-name">ZoneSync</span>
+                </div>
+                <div class="ap-mid">
+                    <h2>ابدأ إدارة مشروعك الزراعي بذكاء</h2>
+                    <p>انضم لآلاف المزارع اللي بيستخدموا ZoneSync لمراقبة محاصيلهم وحماية استثماراتهم.</p>
+                    <div class="ap-stats">
+                        <div>
+                            <div class="ap-stat-n">مجاني</div>
+                            <div class="ap-stat-l">للبداية</div>
+                        </div>
+                        <div>
+                            <div class="ap-stat-n">3 دقايق</div>
+                            <div class="ap-stat-l">للإعداد</div>
+                        </div>
+                        <div>
+                            <div class="ap-stat-n">بدون</div>
+                            <div class="ap-stat-l">بيانات بنكية</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ap-bottom">
+                    <!-- توضيح مهم: من يسجل هنا -->
+                    <div
+                        style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:20px">
+                        <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:12px">👑 هذا التسجيل للمالك
+                            فقط</div>
+                        <div style="display:flex;flex-direction:column;gap:9px">
+                            <div style="display:flex;gap:10px;align-items:flex-start">
+                                <span style="font-size:16px;flex-shrink:0">✅</span>
+                                <div style="font-size:13px;color:rgba(255,255,255,.75)">أنت صاحب المزرعة أو المشروع
+                                    الزراعي</div>
+                            </div>
+                            <div style="display:flex;gap:10px;align-items:flex-start">
+                                <span style="font-size:16px;flex-shrink:0">✅</span>
+                                <div style="font-size:13px;color:rgba(255,255,255,.75)">بتدفع الاشتراك وبتدير الحساب
+                                </div>
+                            </div>
+                            <div style="display:flex;gap:10px;align-items:flex-start">
+                                <span style="font-size:16px;flex-shrink:0">ℹ️</span>
+                                <div style="font-size:13px;color:rgba(255,255,255,.6)">الفلاحين وأعضاء الفريق بيتسجلوا
+                                    عن طريق دعوة منك بعد ما تفتح حسابك</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="auth-form-wrap">
+                <div class="auth-inner">
+                    <div class="auth-mobile-logo">
+                        <div class="auth-mobile-logo-box">Z</div><span>ZoneSync</span>
+                    </div>
+                    <button class="back-link" onclick="go('pg-land')">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7" />
+                        </svg>
+                        الرجوع للرئيسية
+                    </button>
+                    <div class="auth-h">إنشاء حساب مالك</div>
+                    <div class="auth-sub">عندك حساب؟ <span class="lnk" onclick="go('pg-login')">سجّل الدخول</span></div>
+                    <div class="alert-box err" id="reg-err">من فضلك اكمل كل الحقول المطلوبة.</div>
+                    <div class="alert-box ok" id="reg-ok">تم إنشاء الحساب! جاري فتح لوحة التحكم…</div>
+                    <div class="f2">
+                        <div class="fg"><label class="fl">الاسم الأول</label><input class="fi" type="text"
+                                placeholder="أحمد" id="r-fn"></div>
+                        <div class="fg"><label class="fl">اسم العائلة</label><input class="fi" type="text"
+                                placeholder="حسن" id="r-ln"></div>
+                    </div>
+                    <div class="fg"><label class="fl">البريد الإلكتروني</label><input class="fi" type="email"
+                            placeholder="you@farm.com" id="r-email"></div>
+                    <div class="fg"><label class="fl">اسم المزرعة / المشروع</label><input class="fi" type="text"
+                            placeholder="مزرعة حسن للإنتاج الزراعي" id="r-farm"></div>
+                    <div class="fg">
+                        <label class="fl">كلمة المرور</label>
+                        <div class="fi-wrap"><input class="fi" type="password" placeholder="أنشئ كلمة مرور قوية"
+                                id="r-pw" oninput="pwStr(this.value)"><button class="fi-eye"
+                                onclick="eyeToggle('r-pw',this)">👁</button></div>
+                        <div class="pw-str" id="r-pwstr">
+                            <div class="pw-bars">
+                                <div class="pw-bar" id="pb1"></div>
+                                <div class="pw-bar" id="pb2"></div>
+                                <div class="pw-bar" id="pb3"></div>
+                                <div class="pw-bar" id="pb4"></div>
+                            </div>
+                            <div class="pw-lbl" id="pw-lbl">قوة كلمة المرور</div>
+                        </div>
+                    </div>
+                    <div class="fg" style="margin-bottom:18px"><label class="fl">تأكيد كلمة المرور</label><input
+                            class="fi" type="password" placeholder="كرر كلمة المرور" id="r-cpw"></div>
+                    <label class="fcheck"><input type="checkbox" id="r-terms"> أوافق على <a href="#">الشروط والأحكام</a>
+                        و<a href="#">سياسة الخصوصية</a></label>
+                    <button class="fsubmit" onclick="doRegister()">إنشاء الحساب — مجاناً ←</button>
+                    <div style="text-align:center;margin-top:14px;font-size:12px;color:var(--muted)">🔒 لا يلزم بيانات
+                        بنكية · يمكن الإلغاء في أي وقت</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════
+     نسيت كلمة المرور
+═══════════════════════════════ -->
+    <div id="pg-forgot" class="page anim">
+        <div class="auth-grid">
+            <div class="auth-panel">
+                <div class="ap-logo">
+                    <div class="ap-logo-box">Z</div><span class="ap-logo-name">ZoneSync</span>
+                </div>
+                <div class="ap-mid">
+                    <h2>هنرجعلك دخولك في ثواني</h2>
+                    <p>أدخل بريدك الإلكتروني وهنبعتلك كود استعادة فوري.</p>
+                </div>
+                <div class="ap-bottom">
+                    <div style="font-size:13px;color:rgba(255,255,255,.45)">محتاج مساعدة؟ support@zonesync.io</div>
+                </div>
+            </div>
+            <div class="auth-form-wrap">
+                <div class="auth-inner">
+                    <div id="fp1">
+                        <button class="back-link" onclick="go('pg-login')"><svg width="16" height="16" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path d="M19 12H5M12 19l-7-7 7-7" />
+                            </svg>رجوع لتسجيل الدخول</button>
+                        <div style="font-size:48px;margin-bottom:14px">🔑</div>
+                        <div class="auth-h">نسيت كلمة المرور؟</div>
+                        <div class="auth-sub" style="margin-bottom:24px">أدخل بريدك الإلكتروني المسجل وهنبعتلك كود من 6
+                            أرقام.</div>
+                        <div class="fg" style="margin-bottom:22px"><label class="fl">البريد الإلكتروني</label><input
+                                class="fi" type="email" placeholder="you@farm.com" id="fp-email"></div>
+                        <button class="fsubmit" onclick="fpGo(2)">ابعت كود الاستعادة ←</button>
+                    </div>
+                    <div id="fp2" style="display:none">
+                        <button class="back-link" onclick="fpGo(1)"><svg width="16" height="16" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path d="M19 12H5M12 19l-7-7 7-7" />
+                            </svg>رجوع</button>
+                        <div style="font-size:48px;margin-bottom:14px">📧</div>
+                        <div class="auth-h">راجع بريدك الإلكتروني</div>
+                        <div class="auth-sub">بعتنا كود من 6 أرقام على <strong id="fp-email-show"></strong></div>
+                        <div class="otp-row"><input class="otp-i" maxlength="1" oninput="otpNext(this,0)"><input
+                                class="otp-i" maxlength="1" oninput="otpNext(this,1)"><input class="otp-i" maxlength="1"
+                                oninput="otpNext(this,2)"><input class="otp-i" maxlength="1"
+                                oninput="otpNext(this,3)"><input class="otp-i" maxlength="1"
+                                oninput="otpNext(this,4)"><input class="otp-i" maxlength="1" oninput="otpNext(this,5)">
+                        </div>
+                        <div class="otp-resend">ما وصلكش الكود؟ <span onclick="alert('تم إرسال كود جديد!')">إعادة
+                                الإرسال</span></div>
+                        <button class="fsubmit" style="margin-top:20px" onclick="fpGo(3)">تحقق من الكود ←</button>
+                    </div>
+                    <div id="fp3" style="display:none">
+                        <div style="font-size:48px;margin-bottom:14px">🔒</div>
+                        <div class="auth-h">اختار كلمة مرور جديدة</div>
+                        <div class="auth-sub" style="margin-bottom:24px">اختار كلمة مرور قوية لم تستخدمها من قبل.</div>
+                        <div class="fg"><label class="fl">كلمة المرور الجديدة</label>
+                            <div class="fi-wrap"><input class="fi" type="password" placeholder="كلمة مرور جديدة قوية"
+                                    id="fp-npw"><button class="fi-eye" onclick="eyeToggle('fp-npw',this)">👁</button>
+                            </div>
+                        </div>
+                        <div class="fg" style="margin-bottom:24px"><label class="fl">تأكيد كلمة المرور</label><input
+                                class="fi" type="password" placeholder="كرر كلمة المرور الجديدة" id="fp-cpw"></div>
+                        <button class="fsubmit" onclick="fpGo(4)">تغيير كلمة المرور ←</button>
+                    </div>
+                    <div id="fp4" style="display:none;text-align:center;padding-top:40px">
+                        <div style="font-size:64px;margin-bottom:18px">🎉</div>
+                        <div class="auth-h">تم تغيير كلمة المرور!</div>
+                        <div class="auth-sub" style="margin-bottom:28px">كلمة مرورك اتحدثت بنجاح. تقدر تسجل دخولك
+                            دلوقتي.</div>
+                        <button class="fsubmit" onclick="go('pg-login')">الذهاب لتسجيل الدخول ←</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════
+     دعوة فلاح (رابط الدعوة)
+═══════════════════════════════ -->
+    <div id="pg-invite" class="page anim">
+        <div class="auth-grid">
+            <div class="auth-panel">
+                <div class="ap-logo">
+                    <div class="ap-logo-box">Z</div><span class="ap-logo-name">ZoneSync</span>
+                </div>
+                <div class="ap-mid">
+                    <h2>تمت دعوتك للانضمام لفريق المزرعة</h2>
+                    <p>المالك دعاك للعمل على مناطق محددة. أنشئ كلمة مرورك وابدأ الشغل.</p>
+                </div>
+                <div class="ap-bottom">
+                    <div class="ap-card">
+                        <p>حسابك سيتيح لك رؤية المناطق المخصصة لك فقط وتسجيل الأنشطة والتشخيصات.</p>
+                        <div class="ap-author">
+                            <div class="ap-ava">👨‍🌾</div>
+                            <div>
+                                <div class="ap-name">عضو الفريق الزراعي</div>
+                                <div class="ap-role">ZoneSync Team Member</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="auth-form-wrap">
+                <div class="auth-inner">
+                    <div class="invite-banner">
+                        <div class="invite-icon">✉️</div>
+                        <div>
+                            <div class="invite-text-title">دعوة من: مزرعة حسن للإنتاج الزراعي</div>
+                            <div class="invite-text-body">تم تعيينك على منطقتين: منطقة #001 ومنطقة #002. أنشئ كلمة مرور
+                                لتفعيل حسابك.</div>
+                        </div>
+                    </div>
+                    <div class="auth-h">تفعيل حسابك</div>
+                    <div class="auth-sub" style="margin-bottom:24px">بياناتك الأساسية موجودة بالفعل، محتاج بس تحدد كلمة
+                        مرور.</div>
+                    <div class="fg"><label class="fl">الاسم (كما حدده المالك)</label><input class="fi" type="text"
+                            value="محمد علي" readonly style="background:var(--off);color:var(--muted)"></div>
+                    <div class="fg"><label class="fl">البريد الإلكتروني</label><input class="fi" type="email"
+                            value="m.ali@farm.com" readonly style="background:var(--off);color:var(--muted)"></div>
+                    <div class="fg">
+                        <label class="fl">اختار كلمة مرور</label>
+                        <div class="fi-wrap"><input class="fi" type="password" placeholder="كلمة مرور قوية" id="inv-pw"
+                                oninput="pwStr(this.value,'i')"><button class="fi-eye"
+                                onclick="eyeToggle('inv-pw',this)">👁</button></div>
+                        <div class="pw-str" id="i-pwstr">
+                            <div class="pw-bars">
+                                <div class="pw-bar" id="ib1"></div>
+                                <div class="pw-bar" id="ib2"></div>
+                                <div class="pw-bar" id="ib3"></div>
+                                <div class="pw-bar" id="ib4"></div>
+                            </div>
+                            <div class="pw-lbl" id="ipw-lbl">قوة كلمة المرور</div>
+                        </div>
+                    </div>
+                    <div class="fg" style="margin-bottom:22px"><label class="fl">تأكيد كلمة المرور</label><input
+                            class="fi" type="password" placeholder="كرر كلمة المرور"></div>
+                    <button class="fsubmit" onclick="doInviteAccept()">تفعيل الحساب والدخول ←</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════
+     لوحة التحكم
+═══════════════════════════════ -->
+    <div id="pg-app" class="app-shell anim">
+        <div class="sb-overlay" id="sb-overlay" onclick="closeSb()"></div>
+
+        <!-- الشريط الجانبي -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sb-logo">
+                <div class="sb-logo-box">Z</div>
+                <div class="sb-logo-name">Zone<em>Sync</em></div>
+            </div>
+
+            <!-- بادج الباقة (المالك فقط) -->
+            <div class="sb-plan owner-only">
+                <div class="sb-plan-tag">الباقة الحالية</div>
+                <div class="sb-plan-name" id="sb-plan-name">🌿 مجاني</div>
+                <div class="sb-plan-desc" id="sb-plan-desc">3 مناطق · مميزات أساسية</div>
+                <button class="sb-plan-btn" onclick="goSec('plans')">⬆ ترقية الباقة</button>
+            </div>
+
+            <!-- إشعار الفلاح -->
+            <div class="sb-farmer-note farmer-only">
+                <div class="sb-farmer-note-title">👨‍🌾 عضو فريق</div>
+                <div class="sb-farmer-note-body">بتشوف المناطق المخصصة ليك بس من قِبل المالك.</div>
+            </div>
+
+            <nav class="sb-nav">
+                <div class="sb-sec-label">الرئيسية</div>
+                <button class="ni act" onclick="goSec('dashboard',this)">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" rx="1" />
+                        <rect x="14" y="3" width="7" height="7" rx="1" />
+                        <rect x="3" y="14" width="7" height="7" rx="1" />
+                        <rect x="14" y="14" width="7" height="7" rx="1" />
+                    </svg>
+                    لوحة التحكم
+                </button>
+                <button class="ni" onclick="goSec('zones',this)">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+                        <circle cx="12" cy="9" r="2.5" />
+                    </svg>
+                    المناطق
+                    <span class="ni-badge grn">6</span>
+                </button>
+
+                <!-- الري — مالك فقط -->
+                <button class="ni owner-only" onclick="goSec('irrigation',this)">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
+                    </svg>
+                    نظام الري
+                </button>
+
+                <div class="sb-sec-label">المراقبة</div>
+                <button class="ni" onclick="goSec('diagnosis',this)">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <circle cx="11" cy="11" r="8" />
+                        <path d="m21 21-4.35-4.35" />
+                    </svg>
+                    تشخيص النبات
+                    <span class="ni-badge red">2</span>
+                </button>
+
+                <!-- مهامي — فلاح فقط -->
+                <button class="ni farmer-only" onclick="goSec('my-tasks',this)">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path d="M9 11l3 3L22 4" />
+                        <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+                    </svg>
+                    مهامي
+                    <span class="ni-badge red">4</span>
+                </button>
+
+                <button class="ni" onclick="goSec('tickets',this)">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 000 4h6a2 2 0 000-4M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                    التذاكر
+                    <span class="ni-badge red">3</span>
+                </button>
+
+                <!-- إدارة — مالك فقط -->
+                <div class="sb-sec-label owner-only">الإدارة</div>
+                <button class="ni owner-only" onclick="goSec('team',this)">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
+                    </svg>
+                    إدارة الفريق
+                </button>
+                <button class="ni owner-only" onclick="goSec('analytics',this)">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path d="M18 20V10M12 20V4M6 20v-6" />
+                    </svg>
+                    التحليلات
+                </button>
+
+                <div class="sb-sec-label">الحساب</div>
+                <button class="ni owner-only" onclick="goSec('plans',this)">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path d="M5 3l14 9-14 9V3z" />
+                    </svg>
+                    الباقات والأسعار
+                </button>
+                <button class="ni" onclick="doLogout()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" />
+                    </svg>
+                    تسجيل الخروج
+                </button>
+            </nav>
+
+            <div class="sb-user">
+                <div class="sb-user-row">
+                    <div class="sb-ava" id="sb-ava">أح</div>
+                    <div style="min-width:0">
+                        <div class="sb-uname" id="sb-uname">أحمد حسن</div>
+                        <div class="sb-uemail" id="sb-uemail">مالك · مجاني</div>
+                    </div>
+                    <div class="sb-role-pill owner" id="sb-role-pill">مالك</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- الشريط العلوي -->
+        <header class="topbar">
+            <div class="tb-left">
+                <div class="tb-title" id="tb-title">لوحة التحكم</div>
+                <div class="tb-live">
+                    <div class="tb-live-dot"></div>مباشر
+                </div>
+            </div>
+            <div class="tb-search">
+                <svg width="14" height="14" fill="none" stroke="var(--muted)" viewBox="0 0 24 24" stroke-width="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.35-4.35" />
+                </svg>
+                <input placeholder="ابحث عن مناطق، محاصيل، تذاكر…">
+            </div>
+            <div class="tb-right">
+                <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                        <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" />
+                    </svg>
+                    <div class="n-dot"></div>
+                </div>
+                <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                    </svg></div>
+            </div>
+        </header>
+
+        <!-- المحتوى -->
+        <main class="app-content">
+
+            <!-- لوحة التحكم الرئيسية -->
+            <div id="sec-dashboard" class="sec act">
+                <div class="wb">
+                    <div class="wb-main">
+                        <div class="wb-emoji">🌤</div>
+                        <div>
+                            <div class="wb-temp">28°م</div>
+                            <div class="wb-desc">غائم جزئياً</div>
+                            <div class="wb-loc">📍 القاهرة، مصر</div>
+                        </div>
+                    </div>
+                    <div class="wb-stats">
+                        <div>
+                            <div class="wb-sv">62%</div>
+                            <div class="wb-sl">💧 رطوبة الهواء</div>
+                        </div>
+                        <div>
+                            <div class="wb-sv">18 ك/س</div>
+                            <div class="wb-sl">💨 سرعة الريح</div>
+                        </div>
+                        <div>
+                            <div class="wb-sv">أشعة 6</div>
+                            <div class="wb-sl">☀ الأشعة فوق بنفسجية</div>
+                        </div>
+                    </div>
+                    <div class="wb-fc">
+                        <div class="wb-day">
+                            <div class="wb-dn">الإثنين</div>
+                            <div class="wb-di">⛅</div>
+                            <div class="wb-dt">29°</div>
+                        </div>
+                        <div class="wb-day">
+                            <div class="wb-dn">الثلاثاء</div>
+                            <div class="wb-di">🌧</div>
+                            <div class="wb-dt">24°</div>
+                        </div>
+                        <div class="wb-day">
+                            <div class="wb-dn">الأربعاء</div>
+                            <div class="wb-di">☀</div>
+                            <div class="wb-dt">32°</div>
+                        </div>
+                        <div class="wb-day">
+                            <div class="wb-dn">الخميس</div>
+                            <div class="wb-di">☀</div>
+                            <div class="wb-dt">33°</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- إحصائيات المالك -->
+                <div id="owner-stats" class="stat-row">
+                    <div class="sc">
+                        <div class="sc-hd">
+                            <div class="sc-ic g">🌿</div>
+                            <div class="sc-trend up">+2 منطقة</div>
+                        </div>
+                        <div class="sc-val">6</div>
+                        <div class="sc-lbl">مناطق نشطة</div>
+                    </div>
+                    <div class="sc">
+                        <div class="sc-hd">
+                            <div class="sc-ic a">🌾</div>
+                            <div class="sc-trend up">85% متوسط</div>
+                        </div>
+                        <div class="sc-val">4</div>
+                        <div class="sc-lbl">محاصيل نامية</div>
+                    </div>
+                    <div class="sc">
+                        <div class="sc-hd">
+                            <div class="sc-ic r">🎫</div>
+                            <div class="sc-trend dn">3 مفتوحة</div>
+                        </div>
+                        <div class="sc-val">3</div>
+                        <div class="sc-lbl">تذاكر مفتوحة</div>
+                    </div>
+                    <div class="sc">
+                        <div class="sc-hd">
+                            <div class="sc-ic b">💧</div>
+                            <div class="sc-trend warn">−12% استهلاك</div>
+                        </div>
+                        <div class="sc-val">1,240 لتر</div>
+                        <div class="sc-lbl">مياه اليوم</div>
+                    </div>
+                </div>
+                <!-- إحصائيات الفلاح -->
+                <div id="farmer-stats" class="stat-row" style="display:none">
+                    <div class="sc">
+                        <div class="sc-hd">
+                            <div class="sc-ic g">🗺</div>
+                        </div>
+                        <div class="sc-val">2</div>
+                        <div class="sc-lbl">مناطقي المخصصة</div>
+                    </div>
+                    <div class="sc">
+                        <div class="sc-hd">
+                            <div class="sc-ic a">📋</div>
+                            <div class="sc-trend warn">4 معلقة</div>
+                        </div>
+                        <div class="sc-val">4</div>
+                        <div class="sc-lbl">مهام معلقة</div>
+                    </div>
+                    <div class="sc">
+                        <div class="sc-hd">
+                            <div class="sc-ic r">🎫</div>
+                        </div>
+                        <div class="sc-val">1</div>
+                        <div class="sc-lbl">تذاكر مفتوحة</div>
+                    </div>
+                    <div class="sc">
+                        <div class="sc-hd">
+                            <div class="sc-ic b">✅</div>
+                            <div class="sc-trend up">3 اليوم</div>
+                        </div>
+                        <div class="sc-val">8</div>
+                        <div class="sc-lbl">مهام منجزة</div>
+                    </div>
+                </div>
+
+                <div class="main-grid">
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ct">🗺 نظرة على المناطق</div><button class="clink" onclick="goSec('zones')">عرض
+                                الكل ←</button>
+                        </div>
+                        <div class="zone-grid">
+                            <div class="zc ok">
+                                <div class="zc-name">منطقة #001</div>
+                                <div class="zc-crop">🌽 ذرة · مرحلة خضرية</div>
+                                <div class="zc-badge ok">صحية</div>
+                                <div class="zc-row">
+                                    <div class="zci">
+                                        <div class="zci-v" style="color:var(--blue)">72%</div>
+                                        <div class="zci-k">رطوبة</div>
+                                    </div>
+                                    <div class="zci">
+                                        <div class="zci-v" style="color:var(--amber)">26°م</div>
+                                        <div class="zci-k">حرارة</div>
+                                    </div>
+                                    <div class="zci">
+                                        <div class="zci-v" style="color:var(--g3)">6.8</div>
+                                        <div class="zci-k">حموضة</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="zc warn">
+                                <div class="zc-name">منطقة #002</div>
+                                <div class="zc-crop">🍅 طماطم · إزهار</div>
+                                <div class="zc-badge warn">رطوبة منخفضة</div>
+                                <div class="zc-row">
+                                    <div class="zci">
+                                        <div class="zci-v" style="color:var(--amber)">38%</div>
+                                        <div class="zci-k">رطوبة</div>
+                                    </div>
+                                    <div class="zci">
+                                        <div class="zci-v" style="color:var(--amber)">29°م</div>
+                                        <div class="zci-k">حرارة</div>
+                                    </div>
+                                    <div class="zci">
+                                        <div class="zci-v" style="color:var(--g3)">7.1</div>
+                                        <div class="zci-k">حموضة</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="zc ok">
+                                <div class="zc-name">منطقة #003</div>
+                                <div class="zc-crop">🌿 قمح · إنبات</div>
+                                <div class="zc-badge ok">صحية</div>
+                                <div class="zc-row">
+                                    <div class="zci">
+                                        <div class="zci-v" style="color:var(--blue)">65%</div>
+                                        <div class="zci-k">رطوبة</div>
+                                    </div>
+                                    <div class="zci">
+                                        <div class="zci-v" style="color:var(--g3)">22°م</div>
+                                        <div class="zci-k">حرارة</div>
+                                    </div>
+                                    <div class="zci">
+                                        <div class="zci-v" style="color:var(--g3)">6.5</div>
+                                        <div class="zci-k">حموضة</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="zc alert">
+                                <div class="zc-name">منطقة #004</div>
+                                <div class="zc-crop">🧅 بصل · تكوين</div>
+                                <div class="zc-badge alert">⚠ تنبيه</div>
+                                <div class="zc-row">
+                                    <div class="zci">
+                                        <div class="zci-v" style="color:var(--red)">22%</div>
+                                        <div class="zci-k">رطوبة</div>
+                                    </div>
+                                    <div class="zci">
+                                        <div class="zci-v" style="color:var(--red)">34°م</div>
+                                        <div class="zci-k">حرارة</div>
+                                    </div>
+                                    <div class="zci">
+                                        <div class="zci-v" style="color:var(--amber)">7.8</div>
+                                        <div class="zci-k">حموضة</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex;flex-direction:column;gap:16px">
+                        <div class="card">
+                            <div class="ch">
+                                <div class="ct">💧 رطوبة التربة</div>
+                            </div>
+                            <div class="blist">
+                                <div class="brow"><span class="blbl">منطقة #001</span>
+                                    <div class="btrack">
+                                        <div class="bfill" style="width:72%"></div>
+                                    </div><span class="bval">72%</span>
+                                </div>
+                                <div class="brow"><span class="blbl">منطقة #002</span>
+                                    <div class="btrack">
+                                        <div class="bfill a" style="width:38%"></div>
+                                    </div><span class="bval">38%</span>
+                                </div>
+                                <div class="brow"><span class="blbl">منطقة #003</span>
+                                    <div class="btrack">
+                                        <div class="bfill" style="width:65%"></div>
+                                    </div><span class="bval">65%</span>
+                                </div>
+                                <div class="brow"><span class="blbl">منطقة #004</span>
+                                    <div class="btrack">
+                                        <div class="bfill r" style="width:22%"></div>
+                                    </div><span class="bval" style="color:var(--red)">22%</span>
+                                </div>
+                                <div class="brow"><span class="blbl">منطقة #005</span>
+                                    <div class="btrack">
+                                        <div class="bfill" style="width:80%"></div>
+                                    </div><span class="bval">80%</span>
+                                </div>
+                                <div class="brow"><span class="blbl">منطقة #006</span>
+                                    <div class="btrack">
+                                        <div class="bfill" style="width:58%"></div>
+                                    </div><span class="bval">58%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="ch">
+                                <div class="ct">📅 جدول الحصاد</div>
+                            </div>
+                            <div class="hlist">
+                                <div class="hrow">
+                                    <div class="hdot s"></div>
+                                    <div class="hinfo">
+                                        <div class="hz">منطقة #002 – طماطم</div>
+                                        <div class="hc">⚡ بعد 12 يوم</div>
+                                    </div>
+                                    <div class="hbt">
+                                        <div class="hbf" style="width:88%"></div>
+                                    </div>
+                                    <div class="hdate">21 يون</div>
+                                </div>
+                                <div class="hrow">
+                                    <div class="hdot g"></div>
+                                    <div class="hinfo">
+                                        <div class="hz">منطقة #004 – بصل</div>
+                                        <div class="hc">بعد 28 يوم</div>
+                                    </div>
+                                    <div class="hbt">
+                                        <div class="hbf" style="width:72%"></div>
+                                    </div>
+                                    <div class="hdate">7 يول</div>
+                                </div>
+                                <div class="hrow">
+                                    <div class="hdot g"></div>
+                                    <div class="hinfo">
+                                        <div class="hz">منطقة #001 – ذرة</div>
+                                        <div class="hc">بعد 45 يوم</div>
+                                    </div>
+                                    <div class="hbt">
+                                        <div class="hbf" style="width:55%"></div>
+                                    </div>
+                                    <div class="hdate">24 يول</div>
+                                </div>
+                                <div class="hrow">
+                                    <div class="hdot g"></div>
+                                    <div class="hinfo">
+                                        <div class="hz">منطقة #003 – قمح</div>
+                                        <div class="hc">بعد 60 يوم</div>
+                                    </div>
+                                    <div class="hbt">
+                                        <div class="hbf" style="width:40%"></div>
+                                    </div>
+                                    <div class="hdate">8 أغس</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex;flex-direction:column;gap:16px">
+                        <div class="card">
+                            <div class="ch">
+                                <div class="ct">🎫 تذاكر نشطة</div><button class="clink" onclick="goSec('tickets')">الكل
+                                    ←</button>
+                            </div>
+                            <div class="tklist">
+                                <div class="tki">
+                                    <div class="tk-dot h"></div>
+                                    <div>
+                                        <div class="tk-title">منطقة #004 – لفحة الأوراق</div>
+                                        <div class="tk-meta">تشخيص ذكاء اصطناعي · منذ ساعتين</div>
+                                    </div>
+                                    <div class="tk-st open">مفتوحة</div>
+                                </div>
+                                <div class="tki">
+                                    <div class="tk-dot m"></div>
+                                    <div>
+                                        <div class="tk-title">منطقة #002 – رطوبة منخفضة</div>
+                                        <div class="tk-meta">تنبيه حساس · منذ 4 ساعات</div>
+                                    </div>
+                                    <div class="tk-st open">مفتوحة</div>
+                                </div>
+                                <div class="tki">
+                                    <div class="tk-dot l"></div>
+                                    <div>
+                                        <div class="tk-title">منطقة #001 – تسميد</div>
+                                        <div class="tk-meta">مجدولة · اليوم</div>
+                                    </div>
+                                    <div class="tk-st done">محلولة</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="ch">
+                                <div class="ct">🌱 صحة المحاصيل</div>
+                            </div>
+                            <div class="donut-wrap">
+                                <div style="position:relative;flex-shrink:0">
+                                    <svg width="90" height="90" viewBox="0 0 90 90" style="transform:rotate(-90deg)">
+                                        <circle cx="45" cy="45" r="34" fill="none" stroke="var(--border)"
+                                            stroke-width="10" />
+                                        <circle cx="45" cy="45" r="34" fill="none" stroke="var(--g3)" stroke-width="10"
+                                            stroke-dasharray="128 86" stroke-linecap="round" />
+                                        <circle cx="45" cy="45" r="34" fill="none" stroke="var(--amber)"
+                                            stroke-width="10" stroke-dasharray="43 171" stroke-dashoffset="-128"
+                                            stroke-linecap="round" />
+                                        <circle cx="45" cy="45" r="34" fill="none" stroke="var(--red)" stroke-width="10"
+                                            stroke-dasharray="43 171" stroke-dashoffset="-171" />
+                                    </svg>
+                                    <div
+                                        style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center">
+                                        <div
+                                            style="font-family:'Instrument Serif',serif;font-size:20px;color:var(--g2)">
+                                            76%</div>
+                                        <div style="font-size:10px;color:var(--muted)">إجمالي</div>
+                                    </div>
+                                </div>
+                                <div class="donut-legend">
+                                    <div class="dli">
+                                        <div class="dld" style="background:var(--g3)"></div>صحية (4)
+                                    </div>
+                                    <div class="dli">
+                                        <div class="dld" style="background:var(--amber)"></div>تحذير (1)
+                                    </div>
+                                    <div class="dli">
+                                        <div class="dld" style="background:var(--red)"></div>تنبيه (1)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ct">📋 آخر الأنشطة</div><button class="clink">عرض الكل →</button>
+                        </div>
+                        <div class="alist">
+                            <div class="ai">
+                                <div class="ai-ic" style="background:#eff6ff">💧</div>
+                                <div style="flex:1">
+                                    <div class="ai-title">تشغيل ري تلقائي</div>
+                                    <div class="ai-sub">منطقة #004 · الرطوبة وصلت 20%</div>
+                                </div>
+                                <div class="ai-tag auto">تلقائي</div>
+                            </div>
+                            <div class="ai">
+                                <div class="ai-ic" style="background:#fff8ec">🔬</div>
+                                <div style="flex:1">
+                                    <div class="ai-title">تشخيص ذكاء اصطناعي</div>
+                                    <div class="ai-sub">منطقة #004 · لفحة الأوراق</div>
+                                </div>
+                                <div class="ai-tag ai">ذكاء اصطناعي</div>
+                            </div>
+                            <div class="ai">
+                                <div class="ai-ic" style="background:var(--g6)">🌿</div>
+                                <div style="flex:1">
+                                    <div class="ai-title">تسميد المنطقة</div>
+                                    <div class="ai-sub">منطقة #001 · 12 كيلو NPK</div>
+                                </div>
+                                <div class="ai-tag manual">يدوي</div>
+                            </div>
+                            <div class="ai">
+                                <div class="ai-ic" style="background:#fef2f2">🧪</div>
+                                <div style="flex:1">
+                                    <div class="ai-title">رش مبيدات</div>
+                                    <div class="ai-sub">منطقة #003 · 5 لتر</div>
+                                </div>
+                                <div class="ai-tag manual">يدوي</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ct">🤖 توصيات الذكاء الاصطناعي</div>
+                        </div>
+                        <div class="rec g">
+                            <div class="rec-t" style="color:var(--g1)">🚿 اسقِ منطقة #004 فوراً</div>
+                            <div class="rec-b">الرطوبة 22%. البصل في مرحلة التكوين يحتاج 60-70%. يُنصح بدورة ري 45
+                                دقيقة.</div>
+                        </div>
+                        <div class="rec a">
+                            <div class="rec-t" style="color:#b07020">⚠ افحص أوراق منطقة #004</div>
+                            <div class="rec-b">لفحة مبكرة محتملة. وحدة البحوث الزراعية #14 القاهرة (02-2748-1200).</div>
+                        </div>
+                        <div class="rec b">
+                            <div class="rec-t" style="color:#1e40af">🌾 حصاد منطقة #002 بعد 12 يوم</div>
+                            <div class="rec-b">الطماطم في 88% من الدورة. جهّز فريق الحصاد. المتوقع: 21 يونيو.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- المناطق -->
+            <div id="sec-zones" class="sec">
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ct">منطقة #001 – ذرة 🌽</div><span class="tag g">صحية</span>
+                        </div>
+                        <div class="blist">
+                            <div class="brow"><span class="blbl">رطوبة</span>
+                                <div class="btrack">
+                                    <div class="bfill" style="width:72%"></div>
+                                </div><span class="bval">72%</span>
+                            </div>
+                            <div class="brow"><span class="blbl">نيتروجين</span>
+                                <div class="btrack">
+                                    <div class="bfill" style="width:65%"></div>
+                                </div><span class="bval">65%</span>
+                            </div>
+                            <div class="brow"><span class="blbl">فوسفور</span>
+                                <div class="btrack">
+                                    <div class="bfill" style="width:55%"></div>
+                                </div><span class="bval">55%</span>
+                            </div>
+                            <div class="brow"><span class="blbl">بوتاسيوم</span>
+                                <div class="btrack">
+                                    <div class="bfill" style="width:60%"></div>
+                                </div><span class="bval">60%</span>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:8px;margin-top:14px">
+                            <div style="flex:1;text-align:center;background:var(--off);border-radius:8px;padding:8px">
+                                <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--amber)">
+                                    26°م</div>
+                                <div style="font-size:10px;color:var(--muted)">حرارة</div>
+                            </div>
+                            <div style="flex:1;text-align:center;background:var(--off);border-radius:8px;padding:8px">
+                                <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--g3)">6.8
+                                </div>
+                                <div style="font-size:10px;color:var(--muted)">حموضة</div>
+                            </div>
+                            <div style="flex:1;text-align:center;background:var(--off);border-radius:8px;padding:8px">
+                                <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--g2)">خضرية
+                                </div>
+                                <div style="font-size:10px;color:var(--muted)">المرحلة</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ct">منطقة #002 – طماطم 🍅</div><span class="tag a">رطوبة منخفضة</span>
+                        </div>
+                        <div class="blist">
+                            <div class="brow"><span class="blbl">رطوبة</span>
+                                <div class="btrack">
+                                    <div class="bfill a" style="width:38%"></div>
+                                </div><span class="bval">38%</span>
+                            </div>
+                            <div class="brow"><span class="blbl">نيتروجين</span>
+                                <div class="btrack">
+                                    <div class="bfill" style="width:72%"></div>
+                                </div><span class="bval">72%</span>
+                            </div>
+                            <div class="brow"><span class="blbl">فوسفور</span>
+                                <div class="btrack">
+                                    <div class="bfill" style="width:60%"></div>
+                                </div><span class="bval">60%</span>
+                            </div>
+                            <div class="brow"><span class="blbl">بوتاسيوم</span>
+                                <div class="btrack">
+                                    <div class="bfill" style="width:58%"></div>
+                                </div><span class="bval">58%</span>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:8px;margin-top:14px">
+                            <div style="flex:1;text-align:center;background:var(--off);border-radius:8px;padding:8px">
+                                <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--amber)">
+                                    29°م</div>
+                                <div style="font-size:10px;color:var(--muted)">حرارة</div>
+                            </div>
+                            <div style="flex:1;text-align:center;background:var(--off);border-radius:8px;padding:8px">
+                                <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--g3)">7.1
+                                </div>
+                                <div style="font-size:10px;color:var(--muted)">حموضة</div>
+                            </div>
+                            <div style="flex:1;text-align:center;background:var(--off);border-radius:8px;padding:8px">
+                                <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--g2)">إزهار
+                                </div>
+                                <div style="font-size:10px;color:var(--muted)">المرحلة</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ct">منطقة #004 – بصل 🧅</div><span class="tag r">⚠ تنبيه</span>
+                        </div>
+                        <div class="blist">
+                            <div class="brow"><span class="blbl">رطوبة</span>
+                                <div class="btrack">
+                                    <div class="bfill r" style="width:22%"></div>
+                                </div><span class="bval" style="color:var(--red)">22%</span>
+                            </div>
+                            <div class="brow"><span class="blbl">نيتروجين</span>
+                                <div class="btrack">
+                                    <div class="bfill r" style="width:30%"></div>
+                                </div><span class="bval">30%</span>
+                            </div>
+                            <div class="brow"><span class="blbl">فوسفور</span>
+                                <div class="btrack">
+                                    <div class="bfill a" style="width:42%"></div>
+                                </div><span class="bval">42%</span>
+                            </div>
+                            <div class="brow"><span class="blbl">بوتاسيوم</span>
+                                <div class="btrack">
+                                    <div class="bfill a" style="width:45%"></div>
+                                </div><span class="bval">45%</span>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:8px;margin-top:14px">
+                            <div style="flex:1;text-align:center;background:var(--off);border-radius:8px;padding:8px">
+                                <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--red)">34°م
+                                </div>
+                                <div style="font-size:10px;color:var(--muted)">حرارة</div>
+                            </div>
+                            <div style="flex:1;text-align:center;background:var(--off);border-radius:8px;padding:8px">
+                                <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--amber)">
+                                    7.8</div>
+                                <div style="font-size:10px;color:var(--muted)">حموضة</div>
+                            </div>
+                            <div style="flex:1;text-align:center;background:var(--off);border-radius:8px;padding:8px">
+                                <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--red)">
+                                    تكوين</div>
+                                <div style="font-size:10px;color:var(--muted)">المرحلة</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الري (مالك فقط) -->
+            <div id="sec-irrigation" class="sec">
+                <div class="stat-row">
+                    <div class="sc">
+                        <div class="sc-hd">
+                            <div class="sc-ic b">💧</div>
+                        </div>
+                        <div class="sc-val">3</div>
+                        <div class="sc-lbl">مناطق نشطة</div>
+                    </div>
+                    <div class="sc">
+                        <div class="sc-hd">
+                            <div class="sc-ic g">✅</div>
+                        </div>
+                        <div class="sc-val">1,240 لتر</div>
+                        <div class="sc-lbl">استُهلك اليوم</div>
+                    </div>
+                    <div class="sc">
+                        <div class="sc-hd">
+                            <div class="sc-ic a">📅</div>
+                        </div>
+                        <div class="sc-val">2</div>
+                        <div class="sc-lbl">مجدول اليوم</div>
+                    </div>
+                    <div class="sc">
+                        <div class="sc-hd">
+                            <div class="sc-ic g">⚡</div>
+                        </div>
+                        <div class="sc-val">تلقائي</div>
+                        <div class="sc-lbl">وضع التشغيل</div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ct">🚿 التحكم في المناطق</div><button class="btn btn-p"
+                                style="padding:8px 16px;font-size:13px" onclick="alert('جاري ري جميع المناطق…')">💧 ري
+                                الكل</button>
+                        </div>
+                        <div class="irr-grid">
+                            <div class="iz">
+                                <div class="iz-name">منطقة #001 – ذرة</div>
+                                <div class="iz-val">72%</div>
+                                <div class="iz-status" style="color:var(--g3)">● جيدة</div>
+                                <div class="iz-row"><button class="tog"
+                                        onclick="this.classList.toggle('on')"></button><span
+                                        class="tog-lbl">تلقائي</span></div>
+                            </div>
+                            <div class="iz warn">
+                                <div class="iz-name">منطقة #002 – طماطم</div>
+                                <div class="iz-val" style="color:var(--amber)">38%</div>
+                                <div class="iz-status" style="color:var(--amber)">⚠ منخفضة</div>
+                                <div class="iz-row"><button class="tog on"
+                                        onclick="this.classList.toggle('on')"></button><span class="tog-lbl"
+                                        style="color:var(--g3)">يعمل</span></div>
+                            </div>
+                            <div class="iz">
+                                <div class="iz-name">منطقة #003 – قمح</div>
+                                <div class="iz-val">65%</div>
+                                <div class="iz-status" style="color:var(--g3)">● جيدة</div>
+                                <div class="iz-row"><button class="tog"
+                                        onclick="this.classList.toggle('on')"></button><span
+                                        class="tog-lbl">تلقائي</span></div>
+                            </div>
+                            <div class="iz alert">
+                                <div class="iz-name">منطقة #004 – بصل</div>
+                                <div class="iz-val" style="color:var(--red)">22%</div>
+                                <div class="iz-status" style="color:var(--red)">🚨 حرجة</div>
+                                <div class="iz-row"><button class="tog on"
+                                        onclick="this.classList.toggle('on')"></button><span class="tog-lbl"
+                                        style="color:var(--g3)">يعمل</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ct">📊 استهلاك المياه الأسبوعي</div>
+                        </div>
+                        <div class="wchart">
+                            <div class="wc-col">
+                                <div class="wbar" style="height:60%"></div>
+                                <div class="wl">الإثنين</div>
+                            </div>
+                            <div class="wc-col">
+                                <div class="wbar" style="height:80%"></div>
+                                <div class="wl">الثلاثاء</div>
+                            </div>
+                            <div class="wc-col">
+                                <div class="wbar" style="height:45%"></div>
+                                <div class="wl">الأربعاء</div>
+                            </div>
+                            <div class="wc-col">
+                                <div class="wbar" style="height:70%"></div>
+                                <div class="wl">الخميس</div>
+                            </div>
+                            <div class="wc-col">
+                                <div class="wbar" style="height:90%"></div>
+                                <div class="wl">الجمعة</div>
+                            </div>
+                            <div class="wc-col">
+                                <div class="wbar" style="height:55%"></div>
+                                <div class="wl">السبت</div>
+                            </div>
+                            <div class="wc-col">
+                                <div class="wbar" style="height:100%;opacity:.4"></div>
+                                <div class="wl" style="color:var(--g3)">اليوم</div>
+                            </div>
+                        </div>
+                        <div style="margin-top:16px">
+                            <div style="font-size:13.5px;font-weight:700;margin-bottom:10px">📅 جدول ري اليوم</div>
+                            <div style="display:flex;flex-direction:column;gap:7px">
+                                <div
+                                    style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--off);border-radius:9px;font-size:13px">
+                                    <span>💧 منطقة #002 – طماطم</span><span
+                                        style="color:var(--amber);font-weight:600">2:00 م</span></div>
+                                <div
+                                    style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--off);border-radius:9px;font-size:13px">
+                                    <span>💧 منطقة #004 – طارئ</span><span
+                                        style="color:var(--red);font-weight:700">الآن</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- تشخيص النبات (مشترك) -->
+            <div id="sec-diagnosis" class="sec">
+                <div style="max-width:660px;margin:0 auto">
+                    <div class="card" style="margin-bottom:16px">
+                        <div class="ch">
+                            <div class="ct">🔬 تشخيص النبات بالذكاء الاصطناعي</div>
+                            <div style="font-size:12px;color:var(--muted)">مدعوم بـ ZoneSync AI</div>
+                        </div>
+                        <div class="upload-zone">
+                            <div style="font-size:48px;margin-bottom:10px">📸</div>
+                            <div style="font-size:15px;font-weight:700;margin-bottom:5px">ارفع صورة النبات</div>
+                            <div style="font-size:13px;color:var(--muted);margin-bottom:14px">صوّر الأوراق أو الجزء
+                                المتضرر من المحصول</div><button class="btn btn-p">اختيار صورة</button>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:16px">
+                            <div><label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px">نوع
+                                    المحصول</label><select class="fsel">
+                                    <option>اختر المحصول…</option>
+                                    <option>🌽 ذرة</option>
+                                    <option>🍅 طماطم</option>
+                                    <option>🌿 قمح</option>
+                                    <option>🧅 بصل</option>
+                                </select></div>
+                            <div><label
+                                    style="font-size:13px;font-weight:600;display:block;margin-bottom:6px">المنطقة</label><select
+                                    class="fsel">
+                                    <option>اختر المنطقة…</option>
+                                    <option>منطقة #001</option>
+                                    <option>منطقة #002</option>
+                                    <option>منطقة #003</option>
+                                    <option>منطقة #004</option>
+                                </select></div>
+                        </div>
+                        <button class="btn btn-p" style="width:100%;justify-content:center" id="diag-btn"
+                            onclick="runDiag()">🤖 تشغيل التشخيص</button>
+                    </div>
+                    <div class="card" id="diag-result" style="display:none">
+                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">
+                            <div
+                                style="width:38px;height:38px;background:var(--g6);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px">
+                                🔬</div>
+                            <div>
+                                <div style="font-weight:700;font-size:14.5px;color:var(--g1)">اكتمل التشخيص</div>
+                                <div style="font-size:12px;color:var(--muted)">نسبة الثقة: 87%</div>
+                            </div>
+                            <div
+                                style="margin-left:auto;background:var(--g6);color:var(--g2);font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px">
+                                87% دقة</div>
+                        </div>
+                        <div
+                            style="background:var(--off);border-radius:10px;padding:15px;margin-bottom:13px;font-size:13.5px;line-height:1.7;color:var(--mid)">
+                            <strong style="color:var(--text)">المشكلة:</strong> لفحة مبكرة في الأوراق<br><strong
+                                style="color:var(--text)">الحل:</strong> رش فطرية نحاسية. إزالة الأوراق
+                            المتضررة.<br><strong style="color:var(--text)">أقرب وحدة بحوث:</strong> وحدة البحوث الزراعية
+                            #14 – القاهرة (📞 02-2748-1200)</div>
+                        <div style="display:flex;gap:9px"><button class="btn btn-p"
+                                style="padding:8px 16px;font-size:13px" onclick="alert('تم إنشاء تذكرة #T-015!')">🎫
+                                إنشاء تذكرة</button><button class="btn btn-o" style="padding:8px 16px;font-size:13px"
+                                onclick="document.getElementById('diag-result').style.display='none'">تشخيص آخر</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- التذاكر (مشترك) -->
+            <div id="sec-tickets" class="sec">
+                <div class="card">
+                    <div class="ch">
+                        <div class="ct">🎫 كل التذاكر</div>
+                        <div style="display:flex;gap:7px"><span
+                                style="background:#fef2f2;color:var(--red);font-size:11.5px;padding:4px 12px;border-radius:20px;font-weight:700">3
+                                مفتوحة</span><span
+                                style="background:var(--g6);color:var(--g2);font-size:11.5px;padding:4px 12px;border-radius:20px;font-weight:700">12
+                                محلولة</span></div>
+                    </div>
+                    <div class="tklist">
+                        <div class="tki">
+                            <div class="tk-dot h"></div>
+                            <div style="flex:1">
+                                <div class="tk-title">منطقة #004 – لفحة الأوراق</div>
+                                <div class="tk-meta">تشخيص ذكاء اصطناعي #D-014 · خطورة عالية · منذ ساعتين</div>
+                            </div>
+                            <div class="tk-st open">مفتوحة</div>
+                        </div>
+                        <div class="tki">
+                            <div class="tk-dot m"></div>
+                            <div style="flex:1">
+                                <div class="tk-title">منطقة #002 – رطوبة حرجة</div>
+                                <div class="tk-meta">تنبيه حساس · متوسطة · منذ 4 ساعات</div>
+                            </div>
+                            <div class="tk-st open">مفتوحة</div>
+                        </div>
+                        <div class="tki">
+                            <div class="tk-dot m"></div>
+                            <div style="flex:1">
+                                <div class="tk-title">منطقة #005 – درجة حموضة غير طبيعية</div>
+                                <div class="tk-meta">يدوي · متوسطة · أمس</div>
+                            </div>
+                            <div class="tk-st open">مفتوحة</div>
+                        </div>
+                        <div class="tki">
+                            <div class="tk-dot l"></div>
+                            <div style="flex:1">
+                                <div class="tk-title">منطقة #001 – تسميد مجدول</div>
+                                <div class="tk-meta">تلقائي · منخفضة · منذ يومين</div>
+                            </div>
+                            <div class="tk-st done">محلولة</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- مهامي (فلاح فقط) -->
+            <div id="sec-my-tasks" class="sec">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ct">📋 مهامي اليوم</div>
+                            <div style="font-size:12px;color:var(--muted)">4 معلقة</div>
+                        </div>
+                        <div class="task-item">
+                            <div class="task-cb"
+                                onclick="this.classList.toggle('done');this.textContent=this.classList.contains('done')?'✓':''">
+                            </div>
+                            <div style="flex:1">
+                                <div style="font-size:13.5px;font-weight:600">ري منطقة #002 يدوياً</div>
+                                <div style="font-size:12px;color:var(--muted)">الموعد: 2:00 م</div>
+                            </div><span class="tag a">معلقة</span>
+                        </div>
+                        <div class="task-item">
+                            <div class="task-cb"
+                                onclick="this.classList.toggle('done');this.textContent=this.classList.contains('done')?'✓':''">
+                            </div>
+                            <div style="flex:1">
+                                <div style="font-size:13.5px;font-weight:600">تسميد منطقة #001</div>
+                                <div style="font-size:12px;color:var(--muted)">12 كيلو NPK · الموعد: 4:00 م</div>
+                            </div><span class="tag a">معلقة</span>
+                        </div>
+                        <div class="task-item" style="opacity:.6">
+                            <div class="task-cb done">✓</div>
+                            <div style="flex:1">
+                                <div
+                                    style="font-size:13.5px;font-weight:600;text-decoration:line-through;color:var(--muted)">
+                                    فحص حساسات منطقة #003</div>
+                                <div style="font-size:12px;color:var(--muted)">أُنجز الساعة 9:30 ص</div>
+                            </div><span class="tag g">منجزة</span>
+                        </div>
+                        <div class="task-item" style="opacity:.6">
+                            <div class="task-cb done">✓</div>
+                            <div style="flex:1">
+                                <div
+                                    style="font-size:13.5px;font-weight:600;text-decoration:line-through;color:var(--muted)">
+                                    تسجيل قراءات منطقة #004</div>
+                                <div style="font-size:12px;color:var(--muted)">أُنجز الساعة 8:00 ص</div>
+                            </div><span class="tag g">منجزة</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ct">🗺 مناطقي المخصصة</div>
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:10px">
+                            <div class="zc ok" style="padding:14px">
+                                <div class="zc-name">منطقة #001 – ذرة 🌽</div>
+                                <div style="font-size:12px;color:var(--muted);margin-top:2px">مرحلة خضرية · صحية</div>
+                                <div class="zc-badge ok">منطقتي</div>
+                                <div class="zc-row">
+                                    <div class="zci">
+                                        <div class="zci-v" style="color:var(--blue)">72%</div>
+                                        <div class="zci-k">رطوبة</div>
+                                    </div>
+                                    <div class="zci">
+                                        <div class="zci-v" style="color:var(--amber)">26°م</div>
+                                        <div class="zci-k">حرارة</div>
+                                    </div>
+                                    <div class="zci">
+                                        <div class="zci-v" style="color:var(--g3)">6.8</div>
+                                        <div class="zci-k">حموضة</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="zc warn" style="padding:14px">
+                                <div class="zc-name">منطقة #002 – طماطم 🍅</div>
+                                <div style="font-size:12px;color:var(--muted);margin-top:2px">مرحلة الإزهار · رطوبة
+                                    منخفضة</div>
+                                <div class="zc-badge warn">منطقتي</div>
+                                <div class="zc-row">
+                                    <div class="zci">
+                                        <div class="zci-v" style="color:var(--amber)">38%</div>
+                                        <div class="zci-k">رطوبة</div>
+                                    </div>
+                                    <div class="zci">
+                                        <div class="zci-v" style="color:var(--amber)">29°م</div>
+                                        <div class="zci-k">حرارة</div>
+                                    </div>
+                                    <div class="zci">
+                                        <div class="zci-v" style="color:var(--g3)">7.1</div>
+                                        <div class="zci-k">حموضة</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- إدارة الفريق (مالك فقط) — مع زر الدعوة -->
+            <div id="sec-team" class="sec">
+                <div class="card">
+                    <div class="ch">
+                        <div class="ct">👨‍🌾 إدارة الفريق</div>
+                        <button class="btn btn-p" style="padding:8px 16px;font-size:13px" onclick="showInviteModal()">✉
+                            دعوة عضو جديد</button>
+                    </div>
+                    <!-- توضيح كيفية إضافة الفريق -->
+                    <div
+                        style="background:var(--g6);border:1px solid var(--g5);border-radius:11px;padding:14px 16px;margin-bottom:16px;font-size:13.5px;color:var(--mid);line-height:1.65">
+                        <strong style="color:var(--g1)">👑 كيف تضيف عضو للفريق؟</strong><br>
+                        اضغط "دعوة عضو جديد"، أدخل إيميله، وحدد المناطق المخصصة ليه. هيوصله رابط على إيميله يفتحه ويحط
+                        كلمة مرور — وبكده بقاله حساب.
+                    </div>
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>الاسم</th>
+                                <th>الرقم القومي</th>
+                                <th>التليفون</th>
+                                <th>المناطق المخصصة</th>
+                                <th>الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="font-weight:600">محمد علي</td>
+                                <td style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--muted)">
+                                    29801012345</td>
+                                <td style="color:var(--mid)">01012345678</td>
+                                <td><span class="tag g">م#001</span><span class="tag g">م#003</span></td>
+                                <td><span class="tag g">نشط</span></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:600">خالد إبراهيم</td>
+                                <td style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--muted)">
+                                    30005156789</td>
+                                <td style="color:var(--mid)">01198765432</td>
+                                <td><span class="tag g">م#002</span><span class="tag g">م#004</span></td>
+                                <td><span class="tag g">نشط</span></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:600">يوسف حسن</td>
+                                <td style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--muted)">
+                                    29512289012</td>
+                                <td style="color:var(--mid)">01223456789</td>
+                                <td><span class="tag g">م#005</span><span class="tag g">م#006</span></td>
+                                <td><span class="tag a">إجازة</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- التحليلات -->
+            <div id="sec-analytics" class="sec">
+                <div style="text-align:center;padding:70px 0">
+                    <div style="font-size:64px;margin-bottom:16px">📈</div>
+                    <div style="font-family:'Instrument Serif',serif;font-size:26px;margin-bottom:8px">التحليلات
+                        المتقدمة</div>
+                    <div style="font-size:14px;color:var(--muted);margin-bottom:24px">متاحة في باقة <strong
+                            style="color:var(--g2)">برايم</strong> و<strong style="color:var(--g2)">بيزنس</strong> فقط.
+                    </div>
+                    <button class="btn btn-p" onclick="goSec('plans')">⭐ ترقية لبرايم ←</button>
+                </div>
+            </div>
+
+            <!-- الباقات (مالك فقط) -->
+            <div id="sec-plans" class="sec">
+                <div style="text-align:center;padding:36px 0 32px">
+                    <div
+                        style="font-family:'Instrument Serif',serif;font-size:clamp(26px,3vw,36px);letter-spacing:-.5px;margin-bottom:7px">
+                        اختار باقتك</div>
+                    <div style="font-size:15px;color:var(--mid)">وسّع إمكانيات مشروعك الزراعي</div>
+                </div>
+                <div class="app-plan-grid">
+                    <div class="pc">
+                        <div class="pc-name">مجاني</div>
+                        <div class="pc-desc">للبداية</div>
+                        <div class="pc-price"><span class="pc-cur">$</span><span class="pc-num">0</span><span
+                                class="pc-per">/شهر</span></div>
+                        <div class="pc-div"></div>
+                        <div class="pc-feats">
+                            <div class="pc-feat"><span class="pf-yes">✓</span> 3 مناطق</div>
+                            <div class="pc-feat"><span class="pf-yes">✓</span> لوحة تحكم أساسية</div>
+                            <div class="pc-feat"><span class="pf-yes">✓</span> 5 تشخيصات ذكاء اصطناعي</div>
+                            <div class="pc-feat"><span class="pf-no">✗</span><span class="pf-no-txt"> ري تلقائي</span>
+                            </div>
+                            <div class="pc-feat"><span class="pf-no">✗</span><span class="pf-no-txt"> تصدير PDF</span>
+                            </div>
+                        </div><button class="pc-btn pc-outline" disabled>باقتك الحالية</button>
+                    </div>
+                    <div class="pc pop">
+                        <div class="pc-badge">⭐ الأكثر شعبية</div>
+                        <div class="pc-name" style="color:var(--g2)">برايم</div>
+                        <div class="pc-desc">للمشاريع الجادة</div>
+                        <div class="pc-price" style="color:var(--g2)"><span class="pc-cur">$</span><span
+                                class="pc-num">29</span><span class="pc-per">/شهر</span></div>
+                        <div class="pc-div"></div>
+                        <div class="pc-feats">
+                            <div class="pc-feat"><span class="pf-yes">✓</span> 15 منطقة</div>
+                            <div class="pc-feat"><span class="pf-yes">✓</span> <strong>ري تلقائي</strong></div>
+                            <div class="pc-feat"><span class="pf-yes">✓</span> تشخيصات بلا حد</div>
+                            <div class="pc-feat"><span class="pf-yes">✓</span> تصدير PDF</div>
+                            <div class="pc-feat"><span class="pf-yes">✓</span> فريق (3 أعضاء)</div>
+                        </div><button class="pc-btn pc-green"
+                            onclick="upgradePlan('prime','🌟 برايم','15 منطقة · ميزات كاملة')">ترقية لبرايم ←</button>
+                    </div>
+                    <div class="pc">
+                        <div class="pc-name">بيزنس</div>
+                        <div class="pc-desc">للشركات</div>
+                        <div class="pc-price"><span class="pc-cur">$</span><span class="pc-num">99</span><span
+                                class="pc-per">/شهر</span></div>
+                        <div class="pc-div"></div>
+                        <div class="pc-feats">
+                            <div class="pc-feat"><span class="pf-yes">✓</span> <strong>مناطق بلا حد</strong></div>
+                            <div class="pc-feat"><span class="pf-yes">✓</span> كل مميزات برايم</div>
+                            <div class="pc-feat"><span class="pf-yes">✓</span> فريق بلا حد</div>
+                            <div class="pc-feat"><span class="pf-yes">✓</span> أكثر من مالك</div>
+                            <div class="pc-feat"><span class="pf-yes">✓</span> دعم فني مخصص</div>
+                        </div><button class="pc-btn pc-dark"
+                            onclick="upgradePlan('business','🏢 بيزنس','مناطق بلا حد · مؤسسي')">بيزنس ←</button>
+                    </div>
+                </div>
+                <div style="margin-top:36px">
+                    <div
+                        style="font-family:'Instrument Serif',serif;font-size:20px;text-align:center;margin-bottom:14px">
+                        مقارنة الباقات</div>
+                    <table class="cmp-tbl">
+                        <thead>
+                            <tr>
+                                <th>الميزة</th>
+                                <th>مجاني</th>
+                                <th>برايم $29</th>
+                                <th>بيزنس $99</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>عدد المناطق</td>
+                                <td>3</td>
+                                <td>15</td>
+                                <td>بلا حد</td>
+                            </tr>
+                            <tr>
+                                <td>تشخيصات الذكاء الاصطناعي</td>
+                                <td>5 / شهر</td>
+                                <td>بلا حد</td>
+                                <td>بلا حد</td>
+                            </tr>
+                            <tr>
+                                <td>الري التلقائي</td>
+                                <td style="color:var(--border)">✗</td>
+                                <td style="color:var(--g3)">✓</td>
+                                <td style="color:var(--g3)">✓</td>
+                            </tr>
+                            <tr>
+                                <td>تصدير PDF</td>
+                                <td style="color:var(--border)">✗</td>
+                                <td style="color:var(--g3)">✓</td>
+                                <td style="color:var(--g3)">✓</td>
+                            </tr>
+                            <tr>
+                                <td>أعضاء الفريق</td>
+                                <td>1</td>
+                                <td>3</td>
+                                <td>بلا حد</td>
+                            </tr>
+                            <tr>
+                                <td>أكثر من مالك</td>
+                                <td style="color:var(--border)">✗</td>
+                                <td style="color:var(--border)">✗</td>
+                                <td style="color:var(--g3)">✓</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- نافذة الدعوة -->
+        <div id="invite-modal"
+            style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center">
+            <div
+                style="background:#fff;border-radius:18px;padding:28px;width:460px;max-width:90vw;box-shadow:var(--shadow-lg)">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+                    <div style="font-family:'Instrument Serif',serif;font-size:22px">✉ دعوة عضو فريق</div><button
+                        onclick="hideInviteModal()"
+                        style="border:none;background:none;font-size:20px;cursor:pointer;color:var(--muted)">✕</button>
+                </div>
+                <div class="fg"><label class="fl">الاسم الكامل</label><input class="fi" placeholder="محمد علي"
+                        id="inv-name"></div>
+                <div class="fg"><label class="fl">البريد الإلكتروني</label><input class="fi" type="email"
+                        placeholder="m.ali@farm.com" id="inv-email-in"></div>
+                <div class="fg"><label class="fl">الرقم القومي (SSN)</label><input class="fi" placeholder="29801012345"
+                        id="inv-ssn"></div>
+                <div class="fg" style="margin-bottom:20px">
+                    <label class="fl">المناطق المخصصة</label>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                        <label
+                            style="display:flex;align-items:center;gap:8px;font-size:13px;padding:8px 10px;background:var(--off);border:1px solid var(--border);border-radius:8px;cursor:pointer"><input
+                                type="checkbox" accent-color="var(--g2)"> منطقة #001</label>
+                        <label
+                            style="display:flex;align-items:center;gap:8px;font-size:13px;padding:8px 10px;background:var(--off);border:1px solid var(--border);border-radius:8px;cursor:pointer"><input
+                                type="checkbox" accent-color="var(--g2)"> منطقة #002</label>
+                        <label
+                            style="display:flex;align-items:center;gap:8px;font-size:13px;padding:8px 10px;background:var(--off);border:1px solid var(--border);border-radius:8px;cursor:pointer"><input
+                                type="checkbox" accent-color="var(--g2)"> منطقة #003</label>
+                        <label
+                            style="display:flex;align-items:center;gap:8px;font-size:13px;padding:8px 10px;background:var(--off);border:1px solid var(--border);border-radius:8px;cursor:pointer"><input
+                                type="checkbox" accent-color="var(--g2)"> منطقة #004</label>
+                    </div>
+                </div>
+                <button class="fsubmit" onclick="sendInvite()">إرسال دعوة بالإيميل ←</button>
+            </div>
+        </div>
+        <div id="invite-backdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:499"
+            onclick="hideInviteModal()"></div>
+
+        <button class="mob-toggle" onclick="toggleSb()"><svg fill="none" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg></button>
+    </div>
+
+    <script>
+        // ══ STATE ══
+        let appRole = 'owner';
+
+        // ══ PAGE NAVIGATION ══
+        function go(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+            document.querySelectorAll('.app-shell').forEach(p => p.classList.remove('on'));
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.classList.add('on');
+            el.classList.add('anim');
+            setTimeout(() => el.classList.remove('anim'), 400);
+            window.scrollTo(0, 0);
+        }
+
+        // ══ APPLY ROLE ══
+        function applyRole(role, user) {
+            appRole = role;
+            const app = document.getElementById('pg-app');
+            app.className = 'app-shell on anim role-' + role;
+            // Sidebar user info
+            const init = (user.fn[0] + user.ln[0]).toUpperCase();
+            document.getElementById('sb-ava').textContent = init;
+            document.getElementById('sb-uname').textContent = user.fn + ' ' + user.ln;
+            const pill = document.getElementById('sb-role-pill');
+            if (role === 'owner') {
+                document.getElementById('sb-uemail').textContent = 'مالك · مجاني';
+                pill.textContent = 'مالك'; pill.className = 'sb-role-pill owner';
+                document.getElementById('owner-stats').style.display = 'grid';
+                document.getElementById('farmer-stats').style.display = 'none';
+            } else {
+                document.getElementById('sb-uemail').textContent = 'عضو فريق · مناطق مخصصة';
+                pill.textContent = 'فلاح'; pill.className = 'sb-role-pill farmer';
+                document.getElementById('owner-stats').style.display = 'none';
+                document.getElementById('farmer-stats').style.display = 'grid';
+            }
+        }
+
+        // ══ LOGIN ══
+        // ديمو: أي إيميل عادي = مالك | إيميل يحتوي على "farmer" أو "team" = فلاح
+        function doLogin() {
+            const email = document.getElementById('l-email').value.trim();
+            const pw = document.getElementById('l-pw').value;
+            const err = document.getElementById('login-err');
+            if (!email || !pw) { err.style.display = 'block'; return; }
+            err.style.display = 'none';
+            const role = (email.includes('farmer') || email.includes('team')) ? 'farmer' : 'owner';
+            const user = role === 'farmer'
+                ? { fn: 'محمد', ln: 'علي' }
+                : { fn: 'أحمد', ln: 'حسن' };
+            applyRole(role, user);
+            go('pg-app');
+            goSec('dashboard');
+        }
+
+        // ══ REGISTER (مالك فقط) ══
+        function doRegister() {
+            const fn = document.getElementById('r-fn').value.trim();
+            const ln = document.getElementById('r-ln').value.trim();
+            const email = document.getElementById('r-email').value.trim();
+            const farm = document.getElementById('r-farm').value.trim();
+            const pw = document.getElementById('r-pw').value;
+            const cpw = document.getElementById('r-cpw').value;
+            const terms = document.getElementById('r-terms').checked;
+            const err = document.getElementById('reg-err');
+            const ok = document.getElementById('reg-ok');
+            err.style.display = 'none'; ok.style.display = 'none';
+            if (!fn || !ln || !email || !farm || !pw) {
+                err.textContent = 'من فضلك اكمل كل الحقول المطلوبة.';
+                err.style.display = 'block'; return;
+            }
+            if (pw !== cpw) {
+                err.textContent = 'كلمتا المرور غير متطابقتين.';
+                err.style.display = 'block'; return;
+            }
+            if (!terms) {
+                err.textContent = 'لازم توافق على الشروط والأحكام.';
+                err.style.display = 'block'; return;
+            }
+            ok.style.display = 'block';
+            // المالك دائماً
+            setTimeout(() => {
+                applyRole('owner', { fn, ln });
+                go('pg-app');
+                goSec('dashboard');
+            }, 1500);
+        }
+
+        // ══ INVITE ACCEPT ══
+        function doInviteAccept() {
+            applyRole('farmer', { fn: 'محمد', ln: 'علي' });
+            go('pg-app');
+            goSec('dashboard');
+        }
+
+        // ══ LOGOUT ══
+        function doLogout() { go('pg-land'); }
+
+        // ══ SECTION NAVIGATION ══
+        const secNames = {
+            dashboard: 'لوحة التحكم', zones: 'المناطق', irrigation: 'نظام الري',
+            diagnosis: 'تشخيص النبات', tickets: 'التذاكر', team: 'إدارة الفريق',
+            analytics: 'التحليلات', plans: 'الباقات والأسعار', 'my-tasks': 'مهامي'
+        };
+        function goSec(id, el) {
+            document.querySelectorAll('.sec').forEach(s => s.classList.remove('act'));
+            const sec = document.getElementById('sec-' + id);
+            if (sec) sec.classList.add('act');
+            document.querySelectorAll('.ni').forEach(n => n.classList.remove('act'));
+            if (el) el.classList.add('act');
+            const t = document.getElementById('tb-title');
+            if (t) t.textContent = secNames[id] || id;
+            if (window.innerWidth < 768) closeSb();
+        }
+
+        // ══ FORGOT PASSWORD ══
+        function fpGo(n) {
+            [1, 2, 3, 4].forEach(i => {
+                document.getElementById('fp' + i).style.display = i === n ? 'block' : 'none';
+            });
+            if (n === 2) {
+                const e = document.getElementById('fp-email').value;
+                document.getElementById('fp-email-show').textContent = e || 'بريدك الإلكتروني';
+            }
+        }
+
+        // ══ OTP ══
+        function otpNext(el, idx) {
+            if (el.value && idx < 5) el.parentElement.children[idx + 1].focus();
+        }
+
+        // ══ PASSWORD STRENGTH ══
+        function pwStr(val, pfx) {
+            const wrap = document.getElementById((pfx || 'r') + '-pwstr');
+            if (!wrap) return;
+            wrap.classList.add('on');
+            let s = 0;
+            if (val.length >= 8) s++;
+            if (/[A-Z]/.test(val)) s++;
+            if (/[0-9]/.test(val)) s++;
+            if (/[^A-Za-z0-9]/.test(val)) s++;
+            const cls = ['', 'w', 'w', 'm', 's'];
+            const lbls = ['', 'ضعيفة', 'ضعيفة', 'متوسطة', 'قوية'];
+            const bp = (pfx || 'p') + 'b';
+            for (let i = 1; i <= 4; i++) {
+                const b = document.getElementById(bp + i);
+                if (b) b.className = 'pw-bar' + (i <= s ? ' ' + cls[s] : '');
+            }
+            const lbl = document.getElementById((pfx === 'i' ? 'ipw' : 'pw') + '-lbl');
+            if (lbl) lbl.textContent = s ? 'كلمة المرور ' + lbls[s] : 'قوة كلمة المرور';
+        }
+
+        // ══ EYE TOGGLE ══
+        function eyeToggle(id, btn) {
+            const inp = document.getElementById(id);
+            if (!inp) return;
+            inp.type = inp.type === 'password' ? 'text' : 'password';
+            btn.textContent = inp.type === 'text' ? '🙈' : '👁';
+        }
+
+        // ══ MOBILE SIDEBAR ══
+        function toggleSb() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sb-overlay').classList.toggle('open');
+        }
+        function closeSb() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sb-overlay').classList.remove('open');
+        }
+
+        // ══ INVITE MODAL ══
+        function showInviteModal() {
+            document.getElementById('invite-modal').style.display = 'flex';
+            document.getElementById('invite-backdrop').style.display = 'block';
+        }
+        function hideInviteModal() {
+            document.getElementById('invite-modal').style.display = 'none';
+            document.getElementById('invite-backdrop').style.display = 'none';
+        }
+        function sendInvite() {
+            const name = document.getElementById('inv-name').value.trim();
+            const email = document.getElementById('inv-email-in').value.trim();
+            if (!name || !email) { alert('من فضلك اكمل الاسم والإيميل.'); return; }
+            hideInviteModal();
+            alert('✅ تم إرسال دعوة لـ ' + name + ' على ' + email + '\nهيوصله رابط يفعّل بيه حسابه.');
+        }
+
+        // ══ PLAN UPGRADE ══
+        function upgradePlan(plan, name, desc) {
+            document.getElementById('sb-plan-name').textContent = name;
+            document.getElementById('sb-plan-desc').textContent = desc;
+            alert('✅ تم الترقية لباقة ' + name + '!');
+            goSec('dashboard');
+        }
+
+        // ══ AI DIAGNOSIS ══
+        function runDiag() {
+            const btn = document.getElementById('diag-btn');
+            btn.textContent = '🤖 جاري التحليل…'; btn.disabled = true;
+            setTimeout(() => {
+                document.getElementById('diag-result').style.display = 'block';
+                btn.textContent = '🤖 تشغيل التشخيص'; btn.disabled = false;
+                document.getElementById('diag-result').scrollIntoView({ behavior: 'smooth' });
+            }, 2200);
+        }
+
+        // ══ DEMO NOTE ══
+        // للتجربة:
+        // أي إيميل عادي (مثلاً: owner@farm.com) = دخول كمالك
+        // إيميل يحتوي "farmer" (مثلاً: farmer@farm.com) = دخول كعضو فريق
+        // صفحة الدعوة: pg-invite (للتجربة عن طريق go('pg-invite'))
+    </script>
+</body>
+
+</html>
