@@ -6,6 +6,7 @@
 - `ZoneSync.Domain/Enums`: fixed values from SQL `CHECK` constraints.
 - `ZoneSync.Domain/ViewModels`: simplified classes for display and screen data.
 - `ZoneSync.Domain/Mapping`: manual mapping from models to view models.
+- `ZoneSync.Domain/Validation`: manual validation using interfaces and validator classes.
 - `ZoneSync.ConsoleDemo`: console project that creates sample objects and prints view models.
 
 ## Phase 2 Notes
@@ -30,3 +31,15 @@ dotnet run --project backend\ZoneSync.ConsoleDemo\ZoneSync.ConsoleDemo.csproj
 
 The demo creates related objects in memory, such as `Farm`, `Zone`, `CropPlan`,
 `Alert`, and `TaskItem`, then maps them to view models using `ToViewModel()`.
+
+## Phase 4 Notes
+
+Validation is manual and uses an interface contract:
+
+```csharp
+IModelValidator<User> validator = new UserValidator();
+ValidationResult result = validator.Validate(user);
+```
+
+This keeps the current phase focused on OOP concepts: interfaces, classes,
+method implementation, and object validation without adding EF Core or APIs yet.

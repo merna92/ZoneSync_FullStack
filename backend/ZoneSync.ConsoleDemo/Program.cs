@@ -1,6 +1,7 @@
 using ZoneSync.Domain.Enums;
 using ZoneSync.Domain.Mapping;
 using ZoneSync.Domain.Models;
+using ZoneSync.Domain.Validation;
 
 namespace ZoneSync.ConsoleDemo;
 
@@ -199,5 +200,25 @@ internal class Program
         Console.WriteLine(alert.ToViewModel());
         Console.WriteLine(task.ToViewModel());
         #endregion
+
+        #region Validation
+        Console.WriteLine();
+        Console.WriteLine("Validation Results");
+        Console.WriteLine("------------------");
+        PrintValidation("Owner", owner, new UserValidator());
+        PrintValidation("Farm", farm, new FarmValidator());
+        PrintValidation("Zone", zone, new ZoneValidator());
+        PrintValidation("Crop", tomato, new CropValidator());
+        PrintValidation("Crop Plan", cropPlan, new CropPlanValidator());
+        PrintValidation("Sensor", soilSensor, new SensorInstanceValidator());
+        PrintValidation("Alert", alert, new AlertValidator());
+        PrintValidation("Task", task, new TaskItemValidator());
+        #endregion
+    }
+
+    static void PrintValidation<TModel>(string title, TModel model, IModelValidator<TModel> validator)
+    {
+        ValidationResult result = validator.Validate(model);
+        Console.WriteLine($"{title}: {result}");
     }
 }
