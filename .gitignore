@@ -1,0 +1,7 @@
+.dotnet_home/
+bin/
+obj/
+**/bin/
+**/obj/
+.vs/
+.vscode/
