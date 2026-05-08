@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZoneSync.Domain", "ZoneSync.Domain\ZoneSync.Domain.csproj", "{2EA6B2B5-6A60-486B-BCE8-A5189D8C5E4B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZoneSync.ConsoleDemo", "ZoneSync.ConsoleDemo\ZoneSync.ConsoleDemo.csproj", "{069AA553-BADC-4A7E-8DA6-0BEE7A4A8D8A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,18 @@ Global
 		{2EA6B2B5-6A60-486B-BCE8-A5189D8C5E4B}.Release|x64.Build.0 = Release|Any CPU
 		{2EA6B2B5-6A60-486B-BCE8-A5189D8C5E4B}.Release|x86.ActiveCfg = Release|Any CPU
 		{2EA6B2B5-6A60-486B-BCE8-A5189D8C5E4B}.Release|x86.Build.0 = Release|Any CPU
+		{069AA553-BADC-4A7E-8DA6-0BEE7A4A8D8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{069AA553-BADC-4A7E-8DA6-0BEE7A4A8D8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{069AA553-BADC-4A7E-8DA6-0BEE7A4A8D8A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{069AA553-BADC-4A7E-8DA6-0BEE7A4A8D8A}.Debug|x64.Build.0 = Debug|Any CPU
+		{069AA553-BADC-4A7E-8DA6-0BEE7A4A8D8A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{069AA553-BADC-4A7E-8DA6-0BEE7A4A8D8A}.Debug|x86.Build.0 = Debug|Any CPU
+		{069AA553-BADC-4A7E-8DA6-0BEE7A4A8D8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{069AA553-BADC-4A7E-8DA6-0BEE7A4A8D8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{069AA553-BADC-4A7E-8DA6-0BEE7A4A8D8A}.Release|x64.ActiveCfg = Release|Any CPU
+		{069AA553-BADC-4A7E-8DA6-0BEE7A4A8D8A}.Release|x64.Build.0 = Release|Any CPU
+		{069AA553-BADC-4A7E-8DA6-0BEE7A4A8D8A}.Release|x86.ActiveCfg = Release|Any CPU
+		{069AA553-BADC-4A7E-8DA6-0BEE7A4A8D8A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
