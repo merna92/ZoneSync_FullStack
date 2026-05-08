@@ -1,6 +1,7 @@
 using ZoneSync.Domain.Enums;
 using ZoneSync.Domain.Mapping;
 using ZoneSync.Domain.Models;
+using ZoneSync.Domain.Repositories;
 using ZoneSync.Domain.Services;
 using ZoneSync.Domain.Services.Contracts;
 using ZoneSync.Domain.Validation;
@@ -17,6 +18,10 @@ internal class Program
         ISensorConfigurationService sensorConfigurationService = new SensorConfigurationService();
         IAlertService alertService = new AlertService();
         ITaskService taskService = new TaskService();
+        #endregion
+
+        #region Memory Store
+        ZoneSyncMemoryStore memoryStore = new ZoneSyncMemoryStore();
         #endregion
 
         #region Users
@@ -128,6 +133,18 @@ internal class Program
         taskService.AssignTask(task, engineer);
         #endregion
 
+        #region Save In Memory
+        memoryStore.Users.AddRange([owner, engineer]);
+        memoryStore.Farms.Add(farm);
+        memoryStore.Zones.Add(zone);
+        memoryStore.Crops.Add(tomato);
+        memoryStore.CropPlans.Add(cropPlan);
+        memoryStore.SensorModels.Add(soilSensorModel);
+        memoryStore.SensorInstances.Add(soilSensor);
+        memoryStore.Alerts.Add(alert);
+        memoryStore.Tasks.Add(task);
+        #endregion
+
         #region View Models
         Console.WriteLine("ZoneSync Console Demo");
         Console.WriteLine("---------------------");
@@ -153,6 +170,17 @@ internal class Program
         PrintValidation("Sensor", soilSensor, new SensorInstanceValidator());
         PrintValidation("Alert", alert, new AlertValidator());
         PrintValidation("Task", task, new TaskItemValidator());
+        #endregion
+
+        #region Repository Queries
+        Console.WriteLine();
+        Console.WriteLine("Repository Results");
+        Console.WriteLine("------------------");
+        Console.WriteLine($"Users Count: {memoryStore.Users.Count}");
+        Console.WriteLine($"Farms Count: {memoryStore.Farms.Count}");
+        Console.WriteLine($"Zones Count: {memoryStore.Zones.Count}");
+        Console.WriteLine($"Active Alerts Count: {memoryStore.Alerts.Where(alert => alert.Status == AlertStatus.Active).Count}");
+        Console.WriteLine($"High Priority Tasks Count: {memoryStore.Tasks.Where(task => task.Priority == TaskPriority.High).Count}");
         #endregion
     }
 

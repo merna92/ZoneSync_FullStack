@@ -8,6 +8,7 @@
 - `ZoneSync.Domain/Mapping`: manual mapping from models to view models.
 - `ZoneSync.Domain/Validation`: manual validation using interfaces and validator classes.
 - `ZoneSync.Domain/Services`: simple business services that connect related objects.
+- `ZoneSync.Domain/Repositories`: generic in-memory repositories for practicing collections.
 - `ZoneSync.ConsoleDemo`: console project that creates sample objects and prints view models.
 
 ## Phase 2 Notes
@@ -56,3 +57,16 @@ Zone zone = farmService.CreateZone(farm, owner, 1, 20.75m, ZoneStatus.Planted);
 
 The services are still in-memory and OOP-focused. They create objects and update
 navigation lists, but they do not save data to a database yet.
+
+## Phase 6 Notes
+
+The project now has a generic repository contract:
+
+```csharp
+IRepository<User> users = new InMemoryRepository<User>();
+users.Add(owner);
+```
+
+`ZoneSyncMemoryStore` groups repositories for the demo. This is only an
+in-memory collection layer for practicing generics, interfaces, and `List<T>`.
+It is not a replacement for SQL Server or EF Core.
