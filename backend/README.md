@@ -7,6 +7,7 @@
 - `ZoneSync.Domain/ViewModels`: simplified classes for display and screen data.
 - `ZoneSync.Domain/Mapping`: manual mapping from models to view models.
 - `ZoneSync.Domain/Validation`: manual validation using interfaces and validator classes.
+- `ZoneSync.Domain/Services`: simple business services that connect related objects.
 - `ZoneSync.ConsoleDemo`: console project that creates sample objects and prints view models.
 
 ## Phase 2 Notes
@@ -43,3 +44,15 @@ ValidationResult result = validator.Validate(user);
 
 This keeps the current phase focused on OOP concepts: interfaces, classes,
 method implementation, and object validation without adding EF Core or APIs yet.
+
+## Phase 5 Notes
+
+Business operations are now moved to services:
+
+```csharp
+IFarmService farmService = new FarmService();
+Zone zone = farmService.CreateZone(farm, owner, 1, 20.75m, ZoneStatus.Planted);
+```
+
+The services are still in-memory and OOP-focused. They create objects and update
+navigation lists, but they do not save data to a database yet.

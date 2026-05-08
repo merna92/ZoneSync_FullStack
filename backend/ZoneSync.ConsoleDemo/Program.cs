@@ -1,6 +1,8 @@
 using ZoneSync.Domain.Enums;
 using ZoneSync.Domain.Mapping;
 using ZoneSync.Domain.Models;
+using ZoneSync.Domain.Services;
+using ZoneSync.Domain.Services.Contracts;
 using ZoneSync.Domain.Validation;
 
 namespace ZoneSync.ConsoleDemo;
@@ -9,6 +11,14 @@ internal class Program
 {
     static void Main(string[] args)
     {
+        #region Services
+        IFarmService farmService = new FarmService();
+        ICropPlanService cropPlanService = new CropPlanService();
+        ISensorConfigurationService sensorConfigurationService = new SensorConfigurationService();
+        IAlertService alertService = new AlertService();
+        ITaskService taskService = new TaskService();
+        #endregion
+
         #region Users
         User owner = new User
         {
@@ -42,19 +52,7 @@ internal class Program
             TotalArea = 120.50m
         };
 
-        Zone zone = new Zone
-        {
-            ZoneId = 1,
-            ZoneArea = 20.75m,
-            ZoneStatus = ZoneStatus.Planted,
-            FarmId = farm.FarmId,
-            Farm = farm,
-            CreatedByUserId = owner.UserId,
-            CreatedByUser = owner
-        };
-
-        farm.Zones.Add(zone);
-        owner.CreatedZones.Add(zone);
+        Zone zone = farmService.CreateZone(farm, owner, 1, 20.75m, ZoneStatus.Planted);
         #endregion
 
         #region Crop Plan
@@ -79,25 +77,13 @@ internal class Program
 
         tomato.GrowthStages.Add(floweringStage);
 
-        CropPlan cropPlan = new CropPlan
-        {
-            Id = 1,
-            CropId = tomato.Id,
-            Crop = tomato,
-            ZoneId = zone.ZoneId,
-            Zone = zone,
-            CreatedByUserId = owner.UserId,
-            CreatedByUser = owner,
-            CurrentStageId = floweringStage.StageId,
-            CurrentStage = floweringStage,
-            PlantingDate = new DateOnly(2026, 4, 1),
-            IsActive = true
-        };
-
-        zone.CropPlans.Add(cropPlan);
-        tomato.CropPlans.Add(cropPlan);
-        owner.CreatedCropPlans.Add(cropPlan);
-        floweringStage.CurrentCropPlans.Add(cropPlan);
+        CropPlan cropPlan = cropPlanService.CreateCropPlan(
+            tomato,
+            zone,
+            owner,
+            1,
+            new DateOnly(2026, 4, 1),
+            floweringStage);
         #endregion
 
         #region Sensors
@@ -118,74 +104,28 @@ internal class Program
             Status = SensorStatus.Active
         };
 
-        ZoneConfiguration zoneConfiguration = new ZoneConfiguration
-        {
-            Id = 1,
-            ZoneId = zone.ZoneId,
-            Zone = zone,
-            SensorInstanceId = soilSensor.Id,
-            SensorInstance = soilSensor,
-            ConfiguredByUserId = engineer.UserId,
-            ConfiguredByUser = engineer
-        };
-
-        zone.ZoneConfigurations.Add(zoneConfiguration);
-        soilSensor.ZoneConfigurations.Add(zoneConfiguration);
-        engineer.ZoneConfigurations.Add(zoneConfiguration);
+        sensorConfigurationService.ConfigureSensor(zone, soilSensor, engineer, 1);
         #endregion
 
         #region Alert And Task
-        Alert alert = new Alert
-        {
-            Id = 1,
-            ZoneId = zone.ZoneId,
-            Zone = zone,
-            CropPlanId = cropPlan.Id,
-            CropPlan = cropPlan,
-            SensorInstanceId = soilSensor.Id,
-            SensorInstance = soilSensor,
-            Type = AlertType.OutOfRange,
-            Severity = AlertSeverity.High,
-            Status = AlertStatus.Active,
-            FiringDate = DateTime.Now
-        };
+        Alert alert = alertService.CreateAlert(
+            cropPlan,
+            soilSensor,
+            1,
+            AlertType.OutOfRange,
+            AlertSeverity.High,
+            AlertStatus.Active);
 
-        TaskItem task = new TaskItem
-        {
-            Id = 1,
-            ZoneId = zone.ZoneId,
-            Zone = zone,
-            CropPlanId = cropPlan.Id,
-            CropPlan = cropPlan,
-            AlertId = alert.Id,
-            Alert = alert,
-            CreatedByUserId = engineer.UserId,
-            CreatedByUser = engineer,
-            Name = "Check soil moisture",
-            Description = "Inspect the irrigation level in the planted zone.",
-            Status = TaskItemStatus.Pending,
-            Priority = TaskPriority.High,
-            Type = TaskType.BasedOnAlert,
-            DueDate = DateOnly.FromDateTime(DateTime.Today.AddDays(1))
-        };
+        TaskItem task = taskService.CreateTaskFromAlert(
+            alert,
+            engineer,
+            1,
+            "Check soil moisture",
+            "Inspect the irrigation level in the planted zone.",
+            TaskPriority.High,
+            DateOnly.FromDateTime(DateTime.Today.AddDays(1)));
 
-        TaskUser taskUser = new TaskUser
-        {
-            TaskId = task.Id,
-            Task = task,
-            UserId = engineer.UserId,
-            User = engineer
-        };
-
-        zone.Alerts.Add(alert);
-        cropPlan.Alerts.Add(alert);
-        soilSensor.Alerts.Add(alert);
-        alert.Tasks.Add(task);
-        zone.Tasks.Add(task);
-        cropPlan.Tasks.Add(task);
-        engineer.CreatedTasks.Add(task);
-        task.AssignedUsers.Add(taskUser);
-        engineer.AssignedTasks.Add(taskUser);
+        taskService.AssignTask(task, engineer);
         #endregion
 
         #region View Models
